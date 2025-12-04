@@ -1,0 +1,95 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: var(--font-body-family), sans-serif;
+
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+
+  --color-btn: var(--color-btn-bg);
+  --color-btn-text: var(--color-btn-text);
+  --color-btn-border: var(--color-btn-border);
+
+  --color-gray-dark: var(--color-gray-dark);
+  --color-border: var(--color-border);
+
+  --width-page: var(--page-width);
+  --spacing-page-margin: var(--page-margin);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body-family);
+    font-weight: var(--font-body-weight);
+    font-style: var(--font-body-style);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+  }
+
+  html:has(dialog[scroll-lock][open], details[scroll-lock][open]) {
+    overflow: hidden;
+  }
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .shopify-section {
+    --content-width: min(
+      calc(var(--width-page) - var(--spacing-page-margin) * 2),
+      calc(100% - var(--spacing-page-margin) * 2)
+    );
+    --content-margin: minmax(var(--spacing-page-margin), 1fr);
+
+    --content-grid: var(--content-margin) var(--content-width)
+      var(--content-margin);
+
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--content-grid);
+    width: 100%;
+  }
+
+  .shopify-section > * {
+    grid-column: 2;
+  }
+
+  .shopify-section > .full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+@layer utilities {
+  .container-fluid {
+    width: 100%;
+    max-width: var(--width-page);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-page-margin);
+    padding-right: var(--spacing-page-margin);
+  }
+
+  .text-h1 {
+    @apply text-3xl leading-9 md:text-5xl md:leading-12 font-bold;
+  }
+
+  .text-h2 {
+    @apply text-2xl leading-8 md:text-3xl md:leading-9 font-semibold;
+  }
+
+  .body-large {
+    @apply text-base leading-6;
+  }
+
+  .body-medium {
+    @apply text-sm leading-5;
+  }
+}

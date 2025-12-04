@@ -1,18 +1,34 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
+  {% # Loads all font variations (Bold, Italic) with display: swap %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    --font-body-family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
+    --font-body-style: {{ settings.type_primary_font.style }};
+    --font-body-weight: {{ settings.type_primary_font.weight }};
+
+    --page-width: {{ settings.max_page_width }}px;
+    --page-margin: {{ settings.page_margin }}px;
+
+     --color-bg: {{ settings.bg_color | default: '#FFFFFF' }};
+    --color-text: {{ settings.text_color | default: '#111111' }};
+
+    --color-btn-bg: {{ settings.btn_bg | default: '#111111' }};
+    --color-btn-text: {{ settings.btn_text | default: '#FFFFFF' }};
+    --color-btn-border: {{ settings.btn_border | default: '#111111' }};
+
+    --color-gray-dark: {{ settings.color_gray_dark | default: '#737373' }};
+    --color-border: {{ settings.color_border | default: '#EBEBEB' }};
+  }
+
+    body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body-family);
+    font-weight: var(--font-body-weight);
+    font-style: var(--font-body-style);
   }
 {% endstyle %}

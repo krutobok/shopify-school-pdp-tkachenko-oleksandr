@@ -4,7 +4,9 @@
 # Examples:
 #
 # Ignore a specific file:
-#   templates/product.json
+package.json
+package-lock.json
+node_modules
 #
 # Ignore templates with a wildcard pattern:
 #   templates/*.json
