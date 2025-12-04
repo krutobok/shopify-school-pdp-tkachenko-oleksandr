@@ -1,56 +1,137 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+<footer class="bg-background pt-[60px] pb-6 border-t border-border">
+  <div class="container-fluid">
+    <div class="flex flex-col md:flex-row gap-6 md:gap-8 mb-12 flex-wrap">
+      {% for block in section.blocks %}
+        <div class="grow md:grow-0 md:w-1/4 min-w-[200px]" {{ block.shopify_attributes }}>
+          {% if block.type == 'link_list' %}
+            {% capture footer_links_html %}
+              <ul class="flex flex-col gap-3">
+                {% for link in block.settings.menu.links %}
+                  <li>
+                    <a href="{{ link.url }}" class="inline-block relative text-sm leading-5 text-gray-dark hover:text-foreground transition-colors group">
+                      {{ link.title }}                     
+                      <span class="absolute left-0 bottom-0 h-px w-0 bg-current transition-all duration-500 group-hover:w-full"></span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endcapture %}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+            <details class="group md:hidden border-t border-border last:border-b py-4">
+              <summary class="flex justify-between items-center cursor-pointer list-none text-foreground font-medium text-lg mb-0 group-open:mb-4 transition-all">
+                {{ block.settings.heading }}
+                <span class="transform transition-transform duration-300 group-open:rotate-180 text-foreground">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </span>
+              </summary>
+              <div class="animate-fade-in">
+                {{ footer_links_html }}
+              </div>
+            </details>
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
+            <div class="hidden md:block">
+              <p class="text-lg font-medium text-foreground mb-4">
+                {{ block.settings.heading }}
+              </p>
+              {{ footer_links_html }}
+            </div>
+          {% endif %}
+        </div>
       {% endfor %}
-    {% endif %}
+    </div>
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-8 pt-8 border-t border-border">
+      <p class="text-sm text-gray-dark">
+        &copy;&nbsp;{{ 'now' | date: '%Y' }}&nbsp;{{ shop.name }}. All rights reserved.
+      </p>
+
+      <div class="flex flex-col md:flex-row gap-3 md:gap-8">
+        {% for link in section.settings.bottom_links.links %}
+          <a
+            href="{{ link.url }}"
+            class="relative text-sm text-gray-dark hover:text-foreground transition-colors group"
+          >
+            {{ link.title }}
+            <span
+              class="absolute left-0 bottom-0 h-px w-0 bg-current transition-all duration-500 group-hover:w-full"
+            ></span>
+          </a>
+        {% else %}
+          <a href="#" class="text-sm text-gray-dark hover:text-foreground">Terms of Use</a>
+          <a href="#" class="text-sm text-gray-dark hover:text-foreground">Privacy & Cookie Policy</a>
+          <a href="#" class="text-sm text-gray-dark hover:text-foreground">Privacy & Cookie Setting</a>
+        {% endfor %}
+      </div>
+    </div>
   </div>
 </footer>
 
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
-
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "Footer",
   "settings": [
     {
       "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
+      "id": "bottom_links",
+      "label": "Bottom Legal Links",
+      "info": "Menu for 'Terms', 'Privacy', etc."
+    }
+  ],
+  "blocks": [
     {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
+      "type": "link_list",
+      "name": "Menu Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Quick links",
+          "label": "Heading"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Resources"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Help"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "Company"
+          }
+        }
+      ]
     }
   ]
 }

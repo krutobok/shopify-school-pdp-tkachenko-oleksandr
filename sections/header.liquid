@@ -15,12 +15,12 @@
       <span class="block w-[18px] h-0.5 bg-foreground transition-transform duration-300 origin-center"></span>
     </button>
 
-    <div class="header__logo order-2 md:order-0 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
+    <div class="header__logo hidden md:block md:order-0">
       <a href="{{ routes.root_url }}" class="block">
         {% if section.settings.logo != blank %}
           {% assign image_size = section.settings.logo_width | append: 'x' %}
           <img
-            src="{{ section.settings.logo | image_url: image_size }}"
+            src="{{ section.settings.logo | image_url: width: image_size }}"
             alt="{{ shop.name }}"
             width="{{ section.settings.logo_width }}"
             height="{{ section.settings.logo.height }}"
@@ -54,7 +54,7 @@
       </ul>
     </nav>
 
-    <div class="header__icons order-3 md:order-0 flex items-center">
+    <div class="header__icons order-2 md:order-0 flex items-center">
       <a href="{{ routes.cart_url }}" class="relative group" aria-label="Cart">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -74,23 +74,41 @@
       </a>
     </div>
   </div>
-
   <div
     id="MobileMenu"
     class="absolute top-full left-0 w-full bg-background border-t border-border overflow-hidden transition-all duration-300 max-h-0 opacity-0 md:hidden"
   >
-    <ul class="flex flex-col p-4 gap-4">
-      {% for link in section.settings.menu.links %}
-        <li>
-          <a
-            href="{{ link.url }}"
-            class="text-h2 block py-2 border-b border-border text-foreground hover:text-gray-dark"
-          >
-            {{ link.title }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+    <div class="flex flex-col p-4 gap-6">
+      <div class="mobile-menu__logo">
+        <a href="{{ routes.root_url }}" class="block">
+          {% if section.settings.logo != blank %}
+            {% assign image_size = section.settings.logo_width | append: 'x' %}
+            <img
+              src="{{ section.settings.logo | image_url: width: image_size }}"
+              alt="{{ shop.name }}"
+              width="{{ section.settings.logo_width }}"
+              height="{{ section.settings.logo.height }}"
+              loading="lazy"
+              class="object-contain"
+            >
+          {% else %}
+            <span class="text-h2">{{ shop.name }}</span>
+          {% endif %}
+        </a>
+      </div>
+      <ul class="flex flex-col gap-2">
+        {% for link in section.settings.menu.links %}
+          <li>
+            <a
+              href="{{ link.url }}"
+              class="text-lg leading-6 block py-2 border-b border-border text-foreground hover:text-gray-dark transition-colors"
+            >
+              {{ link.title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 </header>
 
@@ -99,9 +117,11 @@
     const burger = document.getElementById('MobileMenuToggle');
     const menu = document.getElementById('MobileMenu');
     const spans = burger.querySelectorAll('span');
+
     burger.addEventListener('click', () => {
       const isExpanded = burger.getAttribute('aria-expanded') === 'true';
       burger.setAttribute('aria-expanded', !isExpanded);
+
       if (!isExpanded) {
         menu.classList.remove('max-h-0', 'opacity-0');
         menu.classList.add('max-h-screen', 'opacity-100');
