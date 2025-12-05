@@ -1,26 +1,13 @@
-<footer class="bg-background pt-[60px] pb-6 border-t border-border">
+<footer class="bg-background pt-16 pb-6 border-t border-border">
   <div class="container-fluid">
-    <div class="flex flex-col md:flex-row gap-6 md:gap-8 mb-12 flex-wrap">
+    <div class="flex flex-col md:flex-row md:gap-8 mb-12 flex-wrap">
       {% for block in section.blocks %}
-        <div class="grow md:grow-0 md:w-1/4 min-w-[200px]" {{ block.shopify_attributes }}>
+        <div class="grow border-t last:border-b border-border md:border-none" {{ block.shopify_attributes }}>
           {% if block.type == 'link_list' %}
-            {% capture footer_links_html %}
-              <ul class="flex flex-col gap-3">
-                {% for link in block.settings.menu.links %}
-                  <li>
-                    <a href="{{ link.url }}" class="inline-block relative text-sm leading-5 text-gray-dark hover:text-foreground transition-colors group">
-                      {{ link.title }}                     
-                      <span class="absolute left-0 bottom-0 h-px w-0 bg-current transition-all duration-500 group-hover:w-full"></span>
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endcapture %}
-
-            <details class="group md:hidden border-t border-border last:border-b py-4">
-              <summary class="flex justify-between items-center cursor-pointer list-none text-foreground font-medium text-lg mb-0 group-open:mb-4 transition-all">
+            <details class="py-4 md:details-content:contents md:py-0">
+              <summary class="flex justify-between items-center cursor-pointer list-none text-foreground font-medium body-large mb-0 [details[open]_&]:mb-4 transition-all md:mb-4 md:cursor-auto">
                 {{ block.settings.heading }}
-                <span class="transform transition-transform duration-300 group-open:rotate-180 text-foreground">
+                <span class="transform transition-transform duration-300 [details[open]_&]:rotate-180 text-foreground md:hidden">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="15"
@@ -36,44 +23,46 @@
                   </svg>
                 </span>
               </summary>
-              <div class="animate-fade-in">
-                {{ footer_links_html }}
+              <div class="animate-fade-in ">
+                <ul class="flex flex-col gap-3">
+                  {% for link in block.settings.menu.links %}
+                    <li>
+                      <a
+                        href="{{ link.url }}"
+                        class="link-animated body-medium text-gray-dark hover:text-foreground"
+                      >
+                        {{ link.title }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
               </div>
             </details>
-
-            <div class="hidden md:block">
-              <p class="text-lg font-medium text-foreground mb-4">
-                {{ block.settings.heading }}
-              </p>
-              {{ footer_links_html }}
-            </div>
           {% endif %}
         </div>
       {% endfor %}
     </div>
 
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-8 pt-8 border-t border-border">
+    <div class="flex flex-col md:flex-row justify-start items-start md:items-center gap-3 md:gap-8">
       <p class="text-sm text-gray-dark">
         &copy;&nbsp;{{ 'now' | date: '%Y' }}&nbsp;{{ shop.name }}. All rights reserved.
       </p>
 
-      <div class="flex flex-col md:flex-row gap-3 md:gap-8">
-        {% for link in section.settings.bottom_links.links %}
-          <a
-            href="{{ link.url }}"
-            class="relative text-sm text-gray-dark hover:text-foreground transition-colors group"
-          >
-            {{ link.title }}
-            <span
-              class="absolute left-0 bottom-0 h-px w-0 bg-current transition-all duration-500 group-hover:w-full"
-            ></span>
-          </a>
-        {% else %}
-          <a href="#" class="text-sm text-gray-dark hover:text-foreground">Terms of Use</a>
-          <a href="#" class="text-sm text-gray-dark hover:text-foreground">Privacy & Cookie Policy</a>
-          <a href="#" class="text-sm text-gray-dark hover:text-foreground">Privacy & Cookie Setting</a>
-        {% endfor %}
-      </div>
+      {% for link in section.settings.bottom_links.links %}
+        <a
+          href="{{ link.url }}"
+          class="relative body-medium text-gray-dark hover:text-foreground transition-colors group"
+        >
+          {{ link.title }}
+          <span
+            class="absolute left-0 bottom-0 h-px w-0 bg-current transition-all duration-500 group-hover:w-full"
+          ></span>
+        </a>
+      {% else %}
+        <a href="#" class="link-animated body-medium text-gray-dark hover:text-foreground">Terms of Use</a>
+        <a href="#" class="link-animated body-medium text-gray-dark hover:text-foreground">Privacy & Cookie Policy</a>
+        <a href="#" class="link-animated body-medium text-gray-dark hover:text-foreground">Privacy & Cookie Setting</a>
+      {% endfor %}
     </div>
   </div>
 </footer>
