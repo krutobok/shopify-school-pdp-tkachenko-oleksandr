@@ -13,9 +13,28 @@
   "sections": {
     "footer": {
       "type": "footer",
+      "blocks": {
+        "link_list_VMBTPD": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Resources",
+            "menu": "resources"
+          }
+        },
+        "link_list_fyykwH": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Menu",
+            "menu": "main-menu"
+          }
+        }
+      },
+      "block_order": [
+        "link_list_VMBTPD",
+        "link_list_fyykwH"
+      ],
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "bottom_links": ""
       }
     }
   },
