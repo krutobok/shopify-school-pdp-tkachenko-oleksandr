@@ -27,11 +27,19 @@
             "heading": "Menu",
             "menu": "main-menu"
           }
+        },
+        "link_list_6BgeJL": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Help",
+            "menu": "help"
+          }
         }
       },
       "block_order": [
         "link_list_VMBTPD",
-        "link_list_fyykwH"
+        "link_list_fyykwH",
+        "link_list_6BgeJL"
       ],
       "settings": {
         "bottom_links": ""
