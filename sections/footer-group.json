@@ -14,6 +14,13 @@
     "footer": {
       "type": "footer",
       "blocks": {
+        "link_list_WKpPM3": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Company",
+            "menu": "company"
+          }
+        },
         "link_list_VMBTPD": {
           "type": "link_list",
           "settings": {
@@ -37,6 +44,7 @@
         }
       },
       "block_order": [
+        "link_list_WKpPM3",
         "link_list_VMBTPD",
         "link_list_fyykwH",
         "link_list_6BgeJL"
