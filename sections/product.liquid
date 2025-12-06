@@ -1,52 +1,260 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+{% comment %} sections/main-product.liquid {% endcomment %}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+<section class="py-12 bg-background" id="MainProductSection" data-section-id="{{ section.id }}">
+  <div class="container-fluid">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      {% comment %} --- ГАЛЕРЕЯ --- {% endcomment %}
+      <div class="product-gallery flex flex-col-reverse md:flex-row gap-4">
+        {% comment %} Thumbnails {% endcomment %}
+        <div class="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible w-full md:w-24 shrink-0 no-scrollbar">
+          {% for image in product.images %}
+            <button
+              class="gallery-thumb border border-transparent hover:border-gray-dark transition-all rounded-md overflow-hidden cursor-pointer w-20 h-20 shrink-0"
+              onclick="changeImage('{{ image.src | image_url: width: 800 }}')"
+            >
+              <img
+                src="{{ image.src | image_url: width: 200 }}"
+                alt="{{ image.alt }}"
+                class="w-full h-full object-cover"
+              >
+            </button>
+          {% endfor %}
+        </div>
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
-
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
+        {% comment %} Main Image {% endcomment %}
+        <div class="flex-grow bg-[#F5F5F5] rounded-lg overflow-hidden relative group h-[500px] md:h-[600px]">
+          {% if product.tags contains 'Highly Rated' %}
+            <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full shadow-sm flex items-center gap-1 z-10">
+              <span class="text-xs font-bold">★ Highly Rated</span>
+            </div>
           {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
 
-    <input type="text" name="quantity" min="1" value="1">
+          <img
+            id="MainImage"
+            src="{{ product.featured_image | image_url: width: 1000 }}"
+            alt="{{ product.title }}"
+            class="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+            fetchpriority="high"
+          >
+        </div>
+      </div>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+      {% comment %} --- ІНФОРМАЦІЯ --- {% endcomment %}
+      <div class="product-info flex flex-col gap-6">
+        <div>
+          <h1 class="text-h1 mb-2">{{ product.title }}</h1>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-sm">★★★★★ 5.0</span>
+          </div>
+        </div>
+
+        <div class="prose body-medium text-gray-dark">
+          {{ product.description }}
+        </div>
+
+        <div class="price-container text-xl">
+          <span class="font-bold text-foreground">
+            {{ product.selected_or_first_available_variant.price | money }}
+          </span>
+          {% if product.selected_or_first_available_variant.compare_at_price
+              > product.selected_or_first_available_variant.price
+          %}
+            <s class="text-gray-dark ml-2">
+              {{ product.selected_or_first_available_variant.compare_at_price | money }}
+            </s>
+          {% endif %}
+        </div>
+
+        {% form 'product', product, id: 'product-form', class: 'flex flex-col gap-6' %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          {% comment %} --- 1. КОЛЬОРИ (Різні продукти) --- {% endcomment %}
+          {% assign related_colors = product.metafields.custom.related_colors.value %}
+
+          {% if related_colors != blank %}
+            <div class="selector-wrapper">
+              <label class="block text-sm font-bold mb-2">Select Color:</label>
+              <div class="flex gap-3">
+                {% for color_prod in related_colors %}
+                  {% comment %}
+                    Важливо: Клас 'color-swatch-link' використовується в JS для перехоплення кліку
+                  {% endcomment %}
+                  <a
+                    href="{{ color_prod.url }}"
+                    class="
+                      color-swatch-link w-20 h-20 rounded-md border-2 overflow-hidden transition-all hover:opacity-80 block
+                      {% if color_prod.handle == product.handle %} border-black {% else %} border-transparent bg-[#F5F5F5] {% endif %}
+                    "
+                    title="{{ color_prod.title }}"
+                    data-handle="{{ color_prod.handle }}"
+                  >
+                    <img
+                      src="{{ color_prod.featured_image | image_url: width: 200 }}"
+                      class="w-full h-full object-cover pointer-events-none"
+                    >
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% comment %} --- 2. РОЗМІРИ (Варіанти цього продукту) --- {% endcomment %}
+          {% unless product.has_only_default_variant %}
+            <div class="selector-wrapper">
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-sm font-bold">Select Size:</label>
+                <button type="button" class="text-sm underline text-gray-dark">Size Guide</button>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2">
+                {% for variant in product.variants %}
+                  <label class="cursor-pointer">
+                    <input
+                      type="radio"
+                      name="id"
+                      value="{{ variant.id }}"
+                      class="peer sr-only variant-radio"
+                      {% if product.selected_or_first_available_variant.id == variant.id %}
+                        checked
+                      {% endif %}
+                    >
+                    <div class="border border-border rounded-md py-3 text-center text-sm font-medium hover:border-black peer-checked:border-black peer-checked:bg-black peer-checked:text-white transition-all peer-disabled:opacity-50 peer-disabled:bg-gray-100">
+                      {{ variant.title }}
+                    </div>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          {% endunless %}
+
+          <div class="mt-4">
+            <button
+              type="submit"
+              name="add"
+              class="flex items-center justify-center w-full bg-btn text-btn-text border border-btn-border py-4 px-8 text-sm font-medium hover:opacity-90 transition-opacity uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+              {% unless product.selected_or_first_available_variant.available %}
+                disabled
+              {% endunless %}
+            >
+              {% if product.selected_or_first_available_variant.available %}
+                Add to Bag
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% comment %}
+  JAVASCRIPT ЛОГІКА
+  Тут реалізовано:
+  1. Оновлення при зміні варіанту (розміру).
+  2. Оновлення при зміні продукту (кольору) БЕЗ перезавантаження.
+{% endcomment %}
+<script>
+  // Глобальна функція для галереї (щоб працювала після ре-рендеру)
+  window.changeImage = function (src) {
+    const mainImg = document.getElementById('MainImage');
+    if (mainImg) mainImg.src = src;
+  };
+
+  class MainProduct {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      this.section = document.getElementById('MainProductSection');
+      if (!this.section) return;
+
+      // 1. Слухаємо зміну розмірів (input radio)
+      this.section.querySelectorAll('.variant-radio').forEach((radio) => {
+        radio.addEventListener('change', (e) => this.handleVariantChange(e));
+      });
+
+      // 2. Слухаємо клік на колір (a.color-swatch-link)
+      this.section.querySelectorAll('.color-swatch-link').forEach((link) => {
+        link.addEventListener('click', (e) => this.handleColorChange(e));
+      });
+    }
+
+    // Логіка зміни РОЗМІРУ (в межах одного продукту)
+    handleVariantChange(e) {
+      const variantId = e.target.value;
+      const url = new URL(window.location);
+      url.searchParams.set('variant', variantId);
+
+      // Оновлюємо URL без перезавантаження
+      window.history.replaceState({}, '', url);
+
+      // Викликаємо оновлення секції
+      this.fetchSection(url.toString());
+    }
+
+    // Логіка зміни КОЛЬОРУ (перехід на інший продукт)
+    handleColorChange(e) {
+      e.preventDefault(); // Зупиняємо звичайний перехід по посиланню
+      const url = e.target.href; // URL нового продукту
+
+      // Оновлюємо URL браузера на новий продукт
+      window.history.pushState({}, '', url);
+
+      // Викликаємо оновлення секції з URL нового продукту
+      this.fetchSection(url);
+    }
+
+    // Головна функція fetch
+    fetchSection(url) {
+      // Додаємо параметр section_id до URL
+      const fetchUrl = new URL(url);
+      fetchUrl.searchParams.set('section_id', 'product'); // ID файлу секції
+
+      // Ефект "завантаження" (опціонально)
+      this.section.style.opacity = '0.5';
+
+      fetch(fetchUrl)
+        .then((response) => response.text())
+        .then((html) => {
+          // Парсимо відповідь
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Знаходимо нову секцію в отриманому HTML
+          const newSectionContent = doc.getElementById('MainProductSection');
+
+          if (newSectionContent) {
+            // Замінюємо HTML
+            this.section.innerHTML = newSectionContent.innerHTML;
+
+            // ВАЖЛИВО: Ре-ініціалізуємо слухачі подій, бо HTML новий
+            this.init();
+          }
+        })
+        .catch((err) => console.error('Error fetching section:', err))
+        .finally(() => {
+          this.section.style.opacity = '1';
+        });
+    }
+  }
+
+  // Запускаємо логіку після завантаження сторінки
+  document.addEventListener('DOMContentLoaded', () => {
+    new MainProduct();
+  });
+</script>
 
 {% schema %}
 {
-  "name": "t:general.product",
+  "name": "Main Product",
   "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "presets": [
+    {
+      "name": "Main Product"
+    }
+  ]
 }
 {% endschema %}

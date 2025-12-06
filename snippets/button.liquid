@@ -1,0 +1,29 @@
+{% comment %}
+  Props:
+  - type: 'submit' | 'button' | 'a'
+  - text: String
+  - href: String (if type is 'a')
+  - class: String (additional classes)
+  - name: String (attr name)
+  - disabled: Boolean
+{% endcomment %}
+
+{% if type == 'a' %}
+  <a
+    href="{{ href }}"
+    class="flex items-center justify-center w-full bg-btn text-btn-text border border-btn-border py-4 px-8 text-sm font-medium hover:opacity-90 transition-opacity uppercase {{ class }}"
+  >
+    {{ text }}
+  </a>
+{% else %}
+  <button
+    type="{{ type | default: 'button' }}"
+    name="{{ name }}"
+    class="flex items-center justify-center w-full bg-btn text-btn-text border border-btn-border py-4 px-8 text-sm font-medium hover:opacity-90 transition-opacity uppercase disabled:opacity-50 disabled:cursor-not-allowed {{ class }}"
+    {% if disabled %}
+      disabled
+    {% endif %}
+  >
+    {{ text }}
+  </button>
+{% endif %}
