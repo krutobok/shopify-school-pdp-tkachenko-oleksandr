@@ -10,7 +10,7 @@
   --color-btn-text: var(--color-btn-text);
   --color-btn-border: var(--color-btn-border);
 
-  --color-gray-dark: var(--color-gray-dark);
+  --color-secondary: var(--color-secondary);
   --color-border: var(--color-border);
 
   --width-page: var(--page-width);
@@ -82,7 +82,7 @@
   }
 
   .text-h2 {
-    @apply text-2xl leading-8 md:text-3xl md:leading-9 font-semibold;
+    @apply text-2xl leading-8 md:text-3xl md:leading-9;
   }
 
   .body-large {

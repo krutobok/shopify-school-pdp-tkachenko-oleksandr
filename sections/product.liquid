@@ -1,112 +1,163 @@
-{% comment %} sections/main-product.liquid {% endcomment %}
-
-<section class="py-12 bg-background" id="MainProductSection" data-section-id="{{ section.id }}">
+<section class="py-12 bg-background" id="MainProduct-{{ section.id }}" data-section-id="{{ section.id }}">
   <div class="container-fluid">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-      {% comment %} --- ГАЛЕРЕЯ --- {% endcomment %}
-      <div class="product-gallery flex flex-col-reverse md:flex-row gap-4">
-        {% comment %} Thumbnails {% endcomment %}
-        <div class="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible w-full md:w-24 shrink-0 no-scrollbar">
+    <nav class="body-medium flex items-center gap-2 text-secondary mb-4" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}" class="hover:text-foreground transition-colors"> Home </a>
+      <span>/</span>
+      {% if collection %}
+        <a href="{{ collection.url }}" class="hover:text-foreground transition-colors">{{ collection.title }}</a>
+        <span>/</span>
+      {% endif %}
+      <span class="text-foreground cursor-default">{{ product.title }}</span>
+    </nav>
+
+    <div class="flex items-stretch gap-6 flex-col md:items-center xl:items-start xl:gap-14 xl:flex-row">
+      <div class="flex flex-col-reverse gap-4 shrink-0 md:flex-row md:gap-6">
+        <div class="flex gap-4 justify-start overflow-x-auto mr-mobile-thumbnails md:justify-between md:flex-col md:gap-0 md:overflow-x-visible md:mr-0">
           {% for image in product.images %}
+            {%- capture main_image_srcset -%}
+              {{ image | image_url: width: 375 }} 375w,
+              {{ image | image_url: width: 550 }} 550w,
+              {{ image | image_url: width: 750 }} 750w,
+              {{ image | image_url: width: 1100 }} 1100w,
+              {{ image | image_url: width: 1500 }} 1500w
+            {%- endcapture -%}
+
+            {% assign is_active = false %}
+            {% if product.selected_or_first_available_variant.featured_media.id == image.id %}
+              {% assign is_active = true %}
+            {% elsif product.selected_or_first_available_variant.featured_media == blank and forloop.first %}
+              {% assign is_active = true %}
+            {% endif %}
+
             <button
-              class="gallery-thumb border border-transparent hover:border-gray-dark transition-all rounded-md overflow-hidden cursor-pointer w-20 h-20 shrink-0"
-              onclick="changeImage('{{ image.src | image_url: width: 800 }}')"
+              class="
+                gallery-thumb-btn w-22 h-22 shrink-0 border-none p-0 rounded-lg
+                aria-selected:relative
+                aria-selected:before:absolute
+                aria-selected:before:inset-0
+                aria-selected:before:z-10
+                aria-selected:before:rounded-lg
+                aria-selected:before:bg-foreground/20
+              "
+              data-src="{{ image.src | image_url: width: 1072 }}"
+              data-srcset="{{ main_image_srcset | strip }}"
+              data-media-id="{{ image.id }}"
+              type="button"
+              aria-selected="{{ is_active }}"
             >
-              <img
-                src="{{ image.src | image_url: width: 200 }}"
-                alt="{{ image.alt }}"
-                class="w-full h-full object-cover"
-              >
+              {% assign thumb_image_alt = image.alt
+                | default: product.title
+                | append: ' - Image '
+                | append: forloop.index
+                | escape
+              %}
+              {{
+                image
+                | image_url: width: 176, height: 176, crop: 'center'
+                | image_tag:
+                  class: 'w-22 h-22 rounded-lg cursor-pointer',
+                  widths: '88, 176',
+                  sizes: '88px',
+                  loading: 'lazy',
+                  alt: thumb_image_alt
+              }}
             </button>
           {% endfor %}
         </div>
 
-        {% comment %} Main Image {% endcomment %}
-        <div class="flex-grow bg-[#F5F5F5] rounded-lg overflow-hidden relative group h-[500px] md:h-[600px]">
-          {% if product.tags contains 'Highly Rated' %}
-            <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full shadow-sm flex items-center gap-1 z-10">
-              <span class="text-xs font-bold">★ Highly Rated</span>
-            </div>
+        <div class="max-w-134 relative w-full">
+          {% render 'product-badge', product: product, class: 'absolute top-4 left-4' %}
+          {% assign main_image = product.featured_image %}
+          {% if main_image != blank %}
+            {% assign main_image_id = 'MainImage-' | append: section.id %}
+            {% assign image_alt = main_image.alt | default: product.title | default: ' - Selected image' | escape %}
+            {{
+              main_image
+              | image_url: width: 1072, height: 1072, crop: 'center'
+              | image_tag:
+                id: main_image_id,
+                alt: image_alt,
+                class: 'max-w-134 w-full rounded-lg aspect-square',
+                widths: '320, 375, 450, 536, 640, 750, 900, 1072',
+                sizes: '(min-width: 568px) 536px, calc(100vw - 32px - 15px)',
+                fetchpriority: 'high'
+            }}
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-contain object-center bg-gray-200' }}
           {% endif %}
-
-          <img
-            id="MainImage"
-            src="{{ product.featured_image | image_url: width: 1000 }}"
-            alt="{{ product.title }}"
-            class="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
-            fetchpriority="high"
-          >
         </div>
       </div>
 
-      {% comment %} --- ІНФОРМАЦІЯ --- {% endcomment %}
-      <div class="product-info flex flex-col gap-6">
+      <div class="flex flex-col space-between">
         <div>
-          <h1 class="text-h1 mb-2">{{ product.title }}</h1>
-          <div class="flex items-center gap-2 mb-4">
-            <span class="text-sm">★★★★★ 5.0</span>
+          <h1 class="text-h2 mb-2">{{ product.title }}</h1>
+          <div class="mb-3">
+            <span class="body-medium">★★★★★ 5.0</span>
           </div>
         </div>
 
-        <div class="prose body-medium text-gray-dark">
+        <div class="prose body-medium text-secondary mb-6">
           {{ product.description }}
         </div>
 
-        <div class="price-container text-xl">
-          <span class="font-bold text-foreground">
-            {{ product.selected_or_first_available_variant.price | money }}
-          </span>
+        <div class="body-large flex gap-1.5 mb-6">
           {% if product.selected_or_first_available_variant.compare_at_price
               > product.selected_or_first_available_variant.price
           %}
-            <s class="text-gray-dark ml-2">
-              {{ product.selected_or_first_available_variant.compare_at_price | money }}
-            </s>
+            <s class="text-secondary">{{ product.selected_or_first_available_variant.compare_at_price | money }}</s>
           {% endif %}
+          <span class="text-foreground">{{ product.selected_or_first_available_variant.price | money }}</span>
         </div>
 
-        {% form 'product', product, id: 'product-form', class: 'flex flex-col gap-6' %}
+        {% assign product_form_id = 'product-form-' | append: section.id %}
+        {% form 'product', product, id: product_form_id, class: 'flex flex-col justify-between' %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
 
-          {% comment %} --- 1. КОЛЬОРИ (Різні продукти) --- {% endcomment %}
           {% assign related_colors = product.metafields.custom.related_colors.value %}
-
           {% if related_colors != blank %}
-            <div class="selector-wrapper">
-              <label class="block text-sm font-bold mb-2">Select Color:</label>
-              <div class="flex gap-3">
+            <div class="selector-wrapper mb-6">
+              <div class="flex gap-2">
                 {% for color_prod in related_colors %}
-                  {% comment %}
-                    Важливо: Клас 'color-swatch-link' використовується в JS для перехоплення кліку
-                  {% endcomment %}
                   <a
                     href="{{ color_prod.url }}"
-                    class="
-                      color-swatch-link w-20 h-20 rounded-md border-2 overflow-hidden transition-all hover:opacity-80 block
-                      {% if color_prod.handle == product.handle %} border-black {% else %} border-transparent bg-[#F5F5F5] {% endif %}
-                    "
+                    class="color-swatch-link w-22 h-22 rounded-lg border overflow-hidden transition-all hover:opacity-80 block {% if color_prod.handle == product.handle %} border-foreground {% else %} border-transparent bg-[#F5F5F5] {% endif %}"
                     title="{{ color_prod.title }}"
-                    data-handle="{{ color_prod.handle }}"
                   >
-                    <img
-                      src="{{ color_prod.featured_image | image_url: width: 200 }}"
-                      class="w-full h-full object-cover pointer-events-none"
-                    >
+                    {% assign color_image_alt = color_prod.featured_image.alt | default: color_prod.title | escape %}
+                    {{
+                      color_prod.featured_image
+                      | image_url: width: 176, height: 176, crop: 'center'
+                      | image_tag:
+                        class: 'w-22 h-22 rounded-lg pointer-events-none',
+                        widths: '88, 176',
+                        sizes: '88px',
+                        loading: 'lazy',
+                        alt: color_image_alt
+                    }}
                   </a>
                 {% endfor %}
               </div>
             </div>
           {% endif %}
 
-          {% comment %} --- 2. РОЗМІРИ (Варіанти цього продукту) --- {% endcomment %}
           {% unless product.has_only_default_variant %}
-            <div class="selector-wrapper">
-              <div class="flex justify-between items-center mb-2">
-                <label class="text-sm font-bold">Select Size:</label>
-                <button type="button" class="text-sm underline text-gray-dark">Size Guide</button>
+            <div class="selector-wrapper mb-8">
+              <div class="flex justify-between items-center mb-3 body-medium">
+                <label>Select Size:</label>
+                <button type="button" class="underline">Size Guide</button>
               </div>
 
-              <div class="grid grid-cols-3 gap-2">
+              {% liquid
+                assign size_index = 0
+                for option in product.options
+                  assign option_downcased = option | downcase
+                  if option_downcased contains 'size' or option_downcased contains 'розмір'
+                    assign size_index = forloop.index0
+                  endif
+                endfor
+              %}
+
+              <div class="grid gap-2 grid-cols-2 md:grid-cols-3">
                 {% for variant in product.variants %}
                   <label class="cursor-pointer">
                     <input
@@ -117,9 +168,12 @@
                       {% if product.selected_or_first_available_variant.id == variant.id %}
                         checked
                       {% endif %}
+                      {% unless variant.available %}
+                        disabled
+                      {% endunless %}
                     >
-                    <div class="border border-border rounded-md py-3 text-center text-sm font-medium hover:border-black peer-checked:border-black peer-checked:bg-black peer-checked:text-white transition-all peer-disabled:opacity-50 peer-disabled:bg-gray-100">
-                      {{ variant.title }}
+                    <div class="border border-border rounded-md py-3 text-center text-sm font-medium hover:border-black peer-checked:border-black peer-checked:bg-black peer-checked:text-white transition-all peer-disabled:opacity-50 peer-disabled:bg-gray-100 peer-disabled:cursor-not-allowed">
+                      {{ variant.options[size_index] }}
                     </div>
                   </label>
                 {% endfor %}
@@ -136,11 +190,7 @@
                 disabled
               {% endunless %}
             >
-              {% if product.selected_or_first_available_variant.available %}
-                Add to Bag
-              {% else %}
-                Sold Out
-              {% endif %}
+              {% if product.selected_or_first_available_variant.available %}Add to Bag{% else %}Sold Out{% endif %}
             </button>
           </div>
         {% endform %}
@@ -149,88 +199,125 @@
   </div>
 </section>
 
-{% comment %}
-  JAVASCRIPT ЛОГІКА
-  Тут реалізовано:
-  1. Оновлення при зміні варіанту (розміру).
-  2. Оновлення при зміні продукту (кольору) БЕЗ перезавантаження.
-{% endcomment %}
 <script>
-  // Глобальна функція для галереї (щоб працювала після ре-рендеру)
-  window.changeImage = function (src) {
-    const mainImg = document.getElementById('MainImage');
-    if (mainImg) mainImg.src = src;
-  };
-
   class MainProduct {
-    constructor() {
+    constructor(sectionId) {
+      this.sectionId = sectionId;
       this.init();
     }
 
     init() {
-      this.section = document.getElementById('MainProductSection');
+      this.section = document.getElementById(`MainProduct-${this.sectionId}`);
       if (!this.section) return;
 
-      // 1. Слухаємо зміну розмірів (input radio)
+      this.mainImage = document.getElementById(`MainImage-${this.sectionId}`);
+
+      this.section.querySelectorAll('.gallery-thumb-btn').forEach((btn) => {
+        btn.addEventListener('click', () => this.handleGalleryClick(btn));
+      });
+
       this.section.querySelectorAll('.variant-radio').forEach((radio) => {
         radio.addEventListener('change', (e) => this.handleVariantChange(e));
       });
 
-      // 2. Слухаємо клік на колір (a.color-swatch-link)
       this.section.querySelectorAll('.color-swatch-link').forEach((link) => {
         link.addEventListener('click', (e) => this.handleColorChange(e));
       });
     }
 
-    // Логіка зміни РОЗМІРУ (в межах одного продукту)
+    handleGalleryClick(btn) {
+      if (!this.mainImage) return;
+
+      const allThumbs = this.section.querySelectorAll('.gallery-thumb-btn');
+      allThumbs.forEach((thumb) => thumb.setAttribute('aria-selected', 'false'));
+      btn.setAttribute('aria-selected', 'true');
+
+      const newSrc = btn.dataset.src;
+      const newSrcset = btn.dataset.srcset;
+
+      if (newSrc) {
+        this.mainImage.src = newSrc;
+        if (newSrcset) {
+          this.mainImage.srcset = newSrcset;
+        } else {
+          this.mainImage.removeAttribute('srcset');
+        }
+      }
+    }
+
     handleVariantChange(e) {
       const variantId = e.target.value;
       const url = new URL(window.location);
       url.searchParams.set('variant', variantId);
-
-      // Оновлюємо URL без перезавантаження
       window.history.replaceState({}, '', url);
 
-      // Викликаємо оновлення секції
-      this.fetchSection(url.toString());
+      this.fetchSection(url.toString(), true);
     }
 
-    // Логіка зміни КОЛЬОРУ (перехід на інший продукт)
     handleColorChange(e) {
-      e.preventDefault(); // Зупиняємо звичайний перехід по посиланню
-      const url = e.target.href; // URL нового продукту
+      e.preventDefault();
+      const link = e.target.closest('a');
+      if (!link) return;
 
-      // Оновлюємо URL браузера на новий продукт
+      const url = link.href;
       window.history.pushState({}, '', url);
 
-      // Викликаємо оновлення секції з URL нового продукту
-      this.fetchSection(url);
+      this.fetchSection(url, false);
     }
 
-    // Головна функція fetch
-    fetchSection(url) {
-      // Додаємо параметр section_id до URL
+    fetchSection(url, keepImage = false) {
       const fetchUrl = new URL(url);
-      fetchUrl.searchParams.set('section_id', 'product'); // ID файлу секції
+      fetchUrl.searchParams.set('section_id', this.section.dataset.sectionId);
 
-      // Ефект "завантаження" (опціонально)
       this.section.style.opacity = '0.5';
+
+      let currentImageState = null;
+      let activeMediaId = null;
+
+      if (keepImage && this.mainImage) {
+        currentImageState = {
+          src: this.mainImage.src,
+          srcset: this.mainImage.srcset,
+        };
+        const activeBtn = this.section.querySelector('.gallery-thumb-btn[aria-selected="true"]');
+        if (activeBtn) {
+          activeMediaId = activeBtn.dataset.mediaId;
+        }
+      }
 
       fetch(fetchUrl)
         .then((response) => response.text())
         .then((html) => {
-          // Парсимо відповідь
           const parser = new DOMParser();
           const doc = parser.parseFromString(html, 'text/html');
-
-          // Знаходимо нову секцію в отриманому HTML
-          const newSectionContent = doc.getElementById('MainProductSection');
+          const newSectionContent = doc.getElementById(`MainProduct-${this.sectionId}`);
 
           if (newSectionContent) {
-            // Замінюємо HTML
-            this.section.innerHTML = newSectionContent.innerHTML;
+            if (keepImage && currentImageState) {
+              const newMainImage = newSectionContent.querySelector(`#MainImage-${this.sectionId}`);
+              if (newMainImage) {
+                newMainImage.setAttribute('src', currentImageState.src);
+                if (currentImageState.srcset) {
+                  newMainImage.setAttribute('srcset', currentImageState.srcset);
+                } else {
+                  newMainImage.removeAttribute('srcset');
+                }
+              }
 
-            // ВАЖЛИВО: Ре-ініціалізуємо слухачі подій, бо HTML новий
+              if (activeMediaId) {
+                const newThumbs = newSectionContent.querySelectorAll('.gallery-thumb-btn');
+                newThumbs.forEach((thumb) => thumb.setAttribute('aria-selected', 'false'));
+
+                const targetThumb = newSectionContent.querySelector(
+                  `.gallery-thumb-btn[data-media-id="${activeMediaId}"]`
+                );
+                if (targetThumb) {
+                  targetThumb.setAttribute('aria-selected', 'true');
+                }
+              }
+            }
+
+            this.section.innerHTML = newSectionContent.innerHTML;
             this.init();
           }
         })
@@ -241,9 +328,8 @@
     }
   }
 
-  // Запускаємо логіку після завантаження сторінки
   document.addEventListener('DOMContentLoaded', () => {
-    new MainProduct();
+    new MainProduct('{{ section.id }}');
   });
 </script>
 

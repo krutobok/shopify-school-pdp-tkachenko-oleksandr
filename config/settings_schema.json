@@ -100,8 +100,8 @@
       },
       {
         "type": "color",
-        "id": "color_gray_dark",
-        "label": "Dark Gray (737373)",
+        "id": "color_secondary",
+        "label": "Secondary / Accent Color",
         "default": "#737373"
       },
       {
