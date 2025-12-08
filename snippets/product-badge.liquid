@@ -6,17 +6,17 @@
       
       {% when 'highly rated' %}
         <div class="flex gap-1 bg-background p-2 body-medium text-foreground rounded-sm">
-          {% render 'icon-star', fill: '#111111', class: 'w-5 h-5' %} <span>Highly Rated</span>
+          {% render 'icon-star', fill: '#111111', class: 'w-5 h-5' %} <span>{{ 'product.highly_rated' | t }}</span>
         </div>
 
       {% when 'new' %}
         <div class="bg-blue-600 text-white flex gap-1 p-2 body-medium rounded-sm">
-          <span>New</span>
+          <span>{{ 'product.new' | t}}</span>
         </div>
 
       {% when 'sale' %}
         <div class="bg-red-600 text-white flex gap-1 p-2 body-medium rounded-sm">
-          <span>Sale</span>
+          <span>{{ 'product.sale' | t }}</span>
         </div>
 
     {% endcase %}

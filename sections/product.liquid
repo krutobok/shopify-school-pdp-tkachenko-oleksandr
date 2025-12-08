@@ -1,13 +1,19 @@
 <section class="py-12 bg-background" id="MainProduct-{{ section.id }}" data-section-id="{{ section.id }}">
   <div class="container-fluid">
     <nav class="body-medium flex items-center gap-2 text-secondary mb-4" aria-label="Breadcrumb">
-      <a href="{{ routes.root_url }}" class="hover:text-foreground transition-colors"> Home </a>
+      <a href="{{ routes.root_url }}" class="hover:text-foreground transition-colors"> {{ 'product.home' | t }} </a>
       <span>/</span>
       {% if collection %}
         <a href="{{ collection.url }}" class="hover:text-foreground transition-colors">{{ collection.title }}</a>
         <span>/</span>
       {% endif %}
-      <span class="text-foreground cursor-default">{{ product.title }}</span>
+      <span class="text-foreground cursor-default">
+        {% if section.settings.remove_color_from_breadcrumbs %}
+          {{ product.title | split: ' - ' | first }}
+        {% else %}
+          {{ product.title }}
+        {% endif %}
+      </span>
     </nav>
 
     <div class="flex items-stretch gap-6 flex-col md:items-center xl:items-start xl:gap-14 xl:flex-row">
@@ -90,10 +96,18 @@
 
       <div class="flex flex-col space-between">
         <div>
-          <h1 class="text-h2 mb-2">{{ product.title }}</h1>
-          <div class="mb-3">
-            {% render 'stars-rating', product: product, show_text: true %}
-          </div>
+          <h1 class="text-h2 mb-2">
+            {% if section.settings.remove_color_from_title %}
+              {{ product.title | split: ' - ' | first }}
+            {% else %}
+              {{ product.title }}
+            {% endif %}
+          </h1>
+          {% if section.settings.show_rating %}
+            <div class="mb-3">
+              {% render 'stars-rating', product: product, show_text: true %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="prose body-medium text-secondary mb-6">
@@ -110,7 +124,7 @@
         </div>
 
         {% assign product_form_id = 'product-form-' | append: section.id %}
-        {% form 'product', product, id: product_form_id, class: 'flex flex-col justify-between' %}
+        {% form 'product', product, id: product_form_id, class: 'flex flex-col justify-between mb-6' %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
 
           {% assign related_colors = product.metafields.custom.related_colors.value %}
@@ -143,8 +157,8 @@
           {% unless product.has_only_default_variant %}
             <div class="selector-wrapper mb-8">
               <div class="flex justify-between items-center mb-3 body-medium">
-                <label>Select Size:</label>
-                <button type="button" class="underline">Size Guide</button>
+                <label>{{ 'product.select_size' | t }}</label>
+                <button type="button" class="underline">{{ 'product.size_guide' | t }}</button>
               </div>
 
               {% liquid
@@ -187,13 +201,13 @@
             </div>
           {% endunless %}
 
-          <div class="mt-4">
+          <div>
             {%- liquid
               if product.selected_or_first_available_variant.available
-                assign button_text = 'Add to Bag'
+                assign button_text = 'product.add_to_cart' | t
                 assign is_disabled = false
               else
-                assign button_text = 'Sold Out'
+                assign button_text = 'product.sold_out' | t
                 assign is_disabled = true
               endif
             -%}
@@ -208,6 +222,29 @@
             %}
           </div>
         {% endform %}
+        {% if section.blocks.size > 0 %}
+          <div class="mt-8 flex flex-col gap-3">
+            {% for block in section.blocks %}
+              {% case block.type %}
+                {% when 'service_text' %}
+                  <div class="flex items-center gap-3 text-sm text-foreground" {{ block.shopify_attributes }}>
+                    {% if block.settings.icon_svg != blank %}
+                      <div class="w-5 h-5 shrink-0 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
+                        {{ block.settings.icon_svg }}
+                      </div>
+                    {% endif %}
+                    <span>{{ block.settings.text }}</span>
+                  </div>
+              {% endcase %}
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% assign product_note = product.metafields.custom.product_note %}
+        {% if product_note != blank %}
+          <div class="body-medium text-secondary">
+            {{ product_note }}
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -350,10 +387,80 @@
 {% schema %}
 {
   "name": "Main Product",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "General Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Title Formatting"
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_color_from_title",
+      "label": "Remove color from title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_color_from_breadcrumbs",
+      "label": "Remove color from breadcrumbs",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "service_text",
+      "name": "Service Benefit",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "Benefit text here"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "SVG Icon Code",
+          "info": "Paste the SVG code here. Ensure it has width/height or viewBox."
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Main Product"
+      "name": "Main Product",
+      "blocks": [
+        {
+          "type": "service_text",
+          "settings": {
+            "text": "Free U.S. Shipping Over $150",
+            "icon_svg": "<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M12.9814 2.81833L14.6481 3.69295C16.4412 4.63391 17.3377 5.10438 17.8355 5.9498C18.3334 6.79523 18.3334 7.84724 18.3334 9.95128V10.0488C18.3334 12.1528 18.3334 13.2048 17.8355 14.0502C17.3377 14.8957 16.4412 15.3661 14.6481 16.3071L12.9814 17.1817C11.5184 17.9495 10.7869 18.3334 10 18.3334C9.21313 18.3334 8.48162 17.9495 7.0186 17.1817L5.35193 16.3071C3.55888 15.3661 2.66235 14.8957 2.16452 14.0502C1.66669 13.2048 1.66669 12.1528 1.66669 10.0488V9.95128C1.66669 7.84724 1.66669 6.79523 2.16452 5.9498C2.66235 5.10438 3.55888 4.63391 5.35193 3.69295L7.0186 2.81832C8.48162 2.05057 9.21313 1.66669 10 1.66669C10.7869 1.66669 11.5184 2.05057 12.9814 2.81833Z' stroke='#111111' stroke-linecap='round'/><path d='M17.5 6.25L14.1667 7.91667M10 10L2.5 6.25M10 10V17.9167M10 10C10 10 12.2855 8.85723 13.75 8.125C13.9127 8.04364 14.1667 7.91667 14.1667 7.91667M14.1667 7.91667V10.8333M14.1667 7.91667L6.25 3.75' stroke='#111111' stroke-linecap='round'/></svg>"
+          }
+        },
+        {
+          "type": "service_text",
+          "settings": {
+            "text": "Safe & Secure Checkout",
+            "icon_svg": "<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M1.66669 9.99998C1.66669 6.85728 1.66669 5.28593 2.643 4.30962C3.61931 3.33331 5.19066 3.33331 8.33335 3.33331H11.6667C14.8094 3.33331 16.3807 3.33331 17.357 4.30962C18.3334 5.28593 18.3334 6.85728 18.3334 9.99998C18.3334 13.1427 18.3334 14.714 17.357 15.6903C16.3807 16.6666 14.8094 16.6666 11.6667 16.6666H8.33335C5.19066 16.6666 3.61931 16.6666 2.643 15.6903C1.66669 14.714 1.66669 13.1427 1.66669 9.99998Z' stroke='#111111'/><path d='M8.33333 13.75H5' stroke='#111111' stroke-linecap='round'/><path d='M6.66667 11.25H5' stroke='#111111' stroke-linecap='round'/><path d='M1.66669 8.33331L18.3334 8.33331' stroke='#111111' stroke-linecap='round'/><path d='M11.6667 12.5C11.6667 11.7143 11.6667 11.3215 11.9108 11.0774C12.1548 10.8333 12.5477 10.8333 13.3334 10.8333C14.119 10.8333 14.5119 10.8333 14.7559 11.0774C15 11.3215 15 11.7143 15 12.5C15 13.2857 15 13.6785 14.7559 13.9226C14.5119 14.1666 14.119 14.1666 13.3334 14.1666C12.5477 14.1666 12.1548 14.1666 11.9108 13.9226C11.6667 13.6785 11.6667 13.2857 11.6667 12.5Z' stroke='#111111'/></svg>"
+          }
+        },
+        {
+          "type": "service_text",
+          "settings": {
+            "text": "Afterpay available at checkout",
+            "icon_svg": "<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M16.7531 6.17558L11.9966 3.52396C10.6003 2.74563 8.85517 3.71826 8.85517 5.27608V5.5481C8.85517 5.79384 8.99107 6.02128 9.21112 6.14357L10.1093 6.64418C10.373 6.79162 10.702 6.60761 10.702 6.31387V5.63725C10.702 5.29894 11.0809 5.0875 11.3837 5.25666L15.5035 7.55396C15.8068 7.72311 15.8068 8.146 15.5035 8.31403L11.3837 10.6113C11.0809 10.7805 10.702 10.569 10.702 10.2307V9.87067C10.702 8.31286 8.95687 7.33909 7.55962 8.11855L2.80312 10.7702C1.40677 11.5485 1.40677 13.4961 2.80312 14.2744L7.55962 16.926C8.95552 17.7044 10.702 16.7317 10.702 15.1739V14.9019C10.702 14.6561 10.5661 14.4298 10.346 14.3064L9.44782 13.8047C9.18412 13.6572 8.85517 13.8412 8.85517 14.135V14.8116C8.85517 15.1499 8.47672 15.3613 8.17342 15.1922L4.05367 12.8949C3.75082 12.7257 3.75082 12.3029 4.05367 12.1337L8.17342 9.83638C8.47672 9.66722 8.85517 9.87868 8.85517 10.217V10.577C8.85517 12.1348 10.6003 13.1086 11.9966 12.3292L16.7531 9.67753C18.1495 8.90146 18.1495 6.95391 16.7531 6.17558Z' fill='#111111'/></svg>"
+          }
+        }
+      ]
     }
   ]
 }

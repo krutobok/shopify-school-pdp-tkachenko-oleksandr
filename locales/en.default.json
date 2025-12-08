@@ -48,5 +48,16 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "product": {
+    "add_to_cart": "Add to Bag",
+    "sold_out": "Sold Out",
+    "select_size": "Select Size:",
+    "size_guide": "Size Guide",
+    "select_color": "Select Color:",
+    "home": "Home",
+    "highly_rated": "Highly Rated",
+    "sale": "Sale",
+    "new": "New"
   }
 }
