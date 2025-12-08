@@ -1,10 +1,3 @@
-{% comment %}
-  snippets/product-badge.liquid
-  Props:
-    - product: Product object
-    - class: String (для позиціонування батьківського контейнера, напр. 'absolute top-4 left-4')
-{% endcomment %}
-
 {% capture badges_html %}
   {% for tag in product.tags %}
     {% assign tag_handle = tag | downcase %}
@@ -13,7 +6,7 @@
       
       {% when 'highly rated' %}
         <div class="flex gap-1 bg-background p-2 body-medium text-foreground rounded-sm">
-          {% render 'star-icon', class: 'w-5 h-5' %} <span>Highly Rated</span>
+          {% render 'icon-star', fill: '#111111', class: 'w-5 h-5' %} <span>Highly Rated</span>
         </div>
 
       {% when 'new' %}

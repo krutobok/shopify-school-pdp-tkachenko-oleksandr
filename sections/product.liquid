@@ -92,7 +92,7 @@
         <div>
           <h1 class="text-h2 mb-2">{{ product.title }}</h1>
           <div class="mb-3">
-            <span class="body-medium">★★★★★ 5.0</span>
+            {% render 'stars-rating', product: product, show_text: true %}
           </div>
         </div>
 
@@ -159,7 +159,7 @@
 
               <div class="grid gap-2 grid-cols-2 md:grid-cols-3">
                 {% for variant in product.variants %}
-                  <label class="cursor-pointer">
+                  <label class="cursor-pointer group">
                     <input
                       type="radio"
                       name="id"
@@ -172,7 +172,13 @@
                         disabled
                       {% endunless %}
                     >
-                    <div class="border border-border rounded-md py-3 text-center text-sm font-medium hover:border-black peer-checked:border-black peer-checked:bg-black peer-checked:text-white transition-all peer-disabled:opacity-50 peer-disabled:bg-gray-100 peer-disabled:cursor-not-allowed">
+                    <div
+                      class="
+                        btn btn-outline w-full body-medium! uppercase!
+                        peer-checked:border-foreground
+                        peer-disabled:bg-gray-100 peer-disabled:border-gray-200 peer-disabled:text-gray-400 peer-disabled:cursor-not-allowed
+                      "
+                    >
                       {{ variant.options[size_index] }}
                     </div>
                   </label>
@@ -182,16 +188,24 @@
           {% endunless %}
 
           <div class="mt-4">
-            <button
-              type="submit"
-              name="add"
-              class="flex items-center justify-center w-full bg-btn text-btn-text border border-btn-border py-4 px-8 text-sm font-medium hover:opacity-90 transition-opacity uppercase disabled:opacity-50 disabled:cursor-not-allowed"
-              {% unless product.selected_or_first_available_variant.available %}
-                disabled
-              {% endunless %}
-            >
-              {% if product.selected_or_first_available_variant.available %}Add to Bag{% else %}Sold Out{% endif %}
-            </button>
+            {%- liquid
+              if product.selected_or_first_available_variant.available
+                assign button_text = 'Add to Bag'
+                assign is_disabled = false
+              else
+                assign button_text = 'Sold Out'
+                assign is_disabled = true
+              endif
+            -%}
+
+            {% render 'button',
+              type: 'submit',
+              name: 'add',
+              text: button_text,
+              class: 'w-full',
+              disabled: is_disabled,
+              variant: 'primary'
+            %}
           </div>
         {% endform %}
       </div>

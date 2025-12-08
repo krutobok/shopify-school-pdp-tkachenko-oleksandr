@@ -1,0 +1,53 @@
+{% liquid
+  assign reviews_data = product.metafields.custom.reviews_json.value
+  assign total_rating = 0
+  assign reviews_count = 0
+
+  if reviews_data != blank
+    assign reviews_count = reviews_data.size
+    for review in reviews_data
+      assign total_rating = total_rating | plus: review.rating
+    endfor
+  endif
+
+  if reviews_count > 0
+    assign average_rating = total_rating | times: 1.0 | divided_by: reviews_count | round: 1
+  else
+    assign average_rating = 0
+  endif
+
+  assign gradient_id = 'star-gradient-' | append: product.id | append: '-' | append: section.id
+%}
+
+<div class="flex items-center gap-1" title="{{ average_rating }} out of 5">
+  <svg width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden; visibility: hidden;">
+    <defs>
+      <linearGradient id="{{ gradient_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="50%" stop-color="#111111" />
+        <stop offset="50%" stop-color="transparent" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="flex gap-0.5">
+    {% for i in (1..5) %}
+      {%- liquid
+        assign fill_color = 'transparent'
+        assign threshold = i | minus: 0.5
+        if average_rating >= i
+          assign fill_color = '#111111'
+        elsif average_rating >= threshold
+          assign fill_color = 'url(#' | append: gradient_id | append: ')'
+        endif
+      -%}
+
+      {% render 'icon-star', fill: fill_color, class: 'w-4 h-4' %}
+    {% endfor %}
+  </div>
+
+  {% if show_text and reviews_count > 0 %}
+    <span class="body-medium text-foreground">
+      {{ average_rating }}
+    </span>
+  {% endif %}
+</div>
