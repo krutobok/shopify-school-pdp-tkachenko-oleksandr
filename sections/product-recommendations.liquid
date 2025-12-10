@@ -1,0 +1,33 @@
+<section
+  class="py-20 overflow-hidden hidden"
+  id="ProductRecommendations-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+></section>
+
+{% schema %}
+{
+  "name": "Product Recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 6,
+      "max": 12,
+      "step": 1,
+      "label": "Number of products",
+      "default": 6
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Recommendations"
+    }
+  ]
+}
+{% endschema %}

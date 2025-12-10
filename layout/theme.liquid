@@ -12,6 +12,7 @@
 
     {{ content_for_header }}
 
+    <link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}">
     {{ 'tailwind.output.css' | asset_url | stylesheet_tag }}
   </head>
 
@@ -21,5 +22,7 @@
     {{ content_for_layout }}
 
     {% sections 'footer-group' %}
+
+    <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
   </body>
 </html>
