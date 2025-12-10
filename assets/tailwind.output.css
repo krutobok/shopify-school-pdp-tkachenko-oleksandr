@@ -908,6 +908,14 @@
       }
     }
   }
+  .aria-selected\:before\:bg-foreground {
+    &[aria-selected="true"] {
+      &::before {
+        content: var(--tw-content);
+        background-color: var(--color-foreground);
+      }
+    }
+  }
   .aria-selected\:before\:bg-foreground\/20 {
     &[aria-selected="true"] {
       &::before {
@@ -916,6 +924,14 @@
         @supports (color: color-mix(in lab, red, red)) {
           background-color: color-mix(in oklab, var(--color-foreground) 20%, transparent);
         }
+      }
+    }
+  }
+  .aria-selected\:before\:opacity-20 {
+    &[aria-selected="true"] {
+      &::before {
+        content: var(--tw-content);
+        opacity: 20%;
       }
     }
   }
