@@ -50,9 +50,18 @@
         "remove_color_from_title": true,
         "remove_color_from_breadcrumbs": true
       }
+    },
+    "product_recommendations_dgYYnW": {
+      "type": "product-recommendations",
+      "name": "Product Recommendations",
+      "settings": {
+        "title": "You may also like",
+        "limit": 6
+      }
     }
   },
   "order": [
-    "product_UFwkFT"
+    "product_UFwkFT",
+    "product_recommendations_dgYYnW"
   ]
 }
