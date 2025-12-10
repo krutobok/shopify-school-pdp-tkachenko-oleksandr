@@ -1,11 +1,11 @@
-<section class="py-12 bg-background" id="MainProduct-{{ section.id }}" data-section-id="{{ section.id }}">
+<section class="py-6 bg-background" id="MainProduct-{{ section.id }}" data-section-id="{{ section.id }}">
   <div class="container-fluid">
     <nav class="body-medium flex items-center gap-2 text-secondary mb-4" aria-label="Breadcrumb">
       <a href="{{ routes.root_url }}" class="hover:text-foreground transition-colors"> {{ 'product.home' | t }} </a>
-      <span>/</span>
+      <span aria-hidden="true">/</span>
       {% if collection %}
         <a href="{{ collection.url }}" class="hover:text-foreground transition-colors">{{ collection.title }}</a>
-        <span>/</span>
+        <span aria-hidden="true">/</span>
       {% endif %}
       <span class="text-foreground cursor-default">
         {% if section.settings.remove_color_from_breadcrumbs %}
@@ -136,6 +136,10 @@
                     href="{{ color_prod.url }}"
                     class="color-swatch-link w-22 h-22 rounded-lg border overflow-hidden transition-all hover:opacity-80 block {% if color_prod.handle == product.handle %} border-foreground {% else %} border-transparent bg-[#F5F5F5] {% endif %}"
                     title="{{ color_prod.title }}"
+                    aria-label="{{ 'product.change_color_to' | t: color: color_prod.title }}"
+                    {% if color_prod.handle == product.handle %}
+                      aria-current="true"
+                    {% endif %}
                   >
                     {% assign color_image_alt = color_prod.featured_image.alt | default: color_prod.title | escape %}
                     {{
@@ -155,7 +159,7 @@
           {% endif %}
 
           {% unless product.has_only_default_variant %}
-            <div class="selector-wrapper mb-8">
+            <div class="selector-wrapper mb-6 md:mb-8">
               <div class="flex justify-between items-center mb-3 body-medium">
                 <label>{{ 'product.select_size' | t }}</label>
                 <button type="button" class="underline">{{ 'product.size_guide' | t }}</button>
@@ -178,6 +182,7 @@
                       type="radio"
                       name="id"
                       value="{{ variant.id }}"
+                      id="variant-radio-{{ variant.id }}"
                       class="peer sr-only variant-radio"
                       {% if product.selected_or_first_available_variant.id == variant.id %}
                         checked
@@ -190,6 +195,7 @@
                       class="
                         btn btn-outline w-full body-medium! uppercase!
                         peer-checked:border-foreground
+                        peer-focus-visible:ring-2 peer-focus-visible:ring-foreground
                         peer-disabled:bg-gray-100 peer-disabled:border-gray-200 peer-disabled:text-gray-400 peer-disabled:cursor-not-allowed
                       "
                     >
@@ -223,13 +229,16 @@
           </div>
         {% endform %}
         {% if section.blocks.size > 0 %}
-          <div class="mt-8 flex flex-col gap-3">
+          <div class="flex flex-col gap-3 mb-6">
             {% for block in section.blocks %}
               {% case block.type %}
                 {% when 'service_text' %}
-                  <div class="flex items-center gap-3 text-sm text-foreground" {{ block.shopify_attributes }}>
+                  <div class="flex items-center gap-1.5 body-medium text-foreground" {{ block.shopify_attributes }}>
                     {% if block.settings.icon_svg != blank %}
-                      <div class="w-5 h-5 shrink-0 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full">
+                      <div
+                        class="w-5 h-5 shrink-0 flex items-center justify-center [&>svg]:w-full [&>svg]:h-full"
+                        aria-hidden="true"
+                      >
                         {{ block.settings.icon_svg }}
                       </div>
                     {% endif %}
@@ -370,6 +379,8 @@
 
             this.section.innerHTML = newSectionContent.innerHTML;
             this.init();
+            const variantId = fetchUrl.searchParams.get('variant');
+            document.getElementById(`variant-radio-${variantId}`).focus();
           }
         })
         .catch((err) => console.error('Error fetching section:', err))

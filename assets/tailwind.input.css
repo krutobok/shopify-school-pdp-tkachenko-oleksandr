@@ -13,8 +13,10 @@
   --color-secondary: var(--color-secondary);
   --color-border: var(--color-border);
 
-  --width-page: var(--page-width);
+  --spacing-width-page: var(--page-width);
   --spacing-page-margin: var(--page-margin);
+  --spacing-page-margin-mobile: calc(var(--spacing-page-margin) / 1.5);
+  --spacing-mobile-thumbnails: calc(var(--spacing-page-margin) * -1);
 }
 
 @layer base {
@@ -43,8 +45,9 @@
 
 @layer components {
   .shopify-section {
+    /* Розрахунок ширини контенту (залишаємо для сумісності змінних) */
     --content-width: min(
-      calc(var(--width-page) - var(--spacing-page-margin) * 2),
+      calc(var(--spacing-width-page) - var(--spacing-page-margin) * 2),
       calc(100% - var(--spacing-page-margin) * 2)
     );
     --content-margin: minmax(var(--spacing-page-margin), 1fr);
@@ -56,12 +59,22 @@
     display: grid;
     grid-template-columns: var(--content-grid);
     width: 100%;
+
+    /* ВАЖЛИВО: Це прибирає горизонтальний скрол, якщо контент вилазить */
+    overflow-x: hidden;
   }
 
   .shopify-section > * {
-    grid-column: 2;
+    /* Розтягує елемент від лівого краю (1) до правого (-1) */
+    grid-column: 1 / -1;
+
+    /* Страховка від переповнення ширини */
+    width: 100%;
+    max-width: 100%;
   }
 
+  /* Цей клас можна залишити, якщо ви захочете використовувати його 
+     явним чином для специфічних блоків */
   .shopify-section > .full-width {
     grid-column: 1 / -1;
   }
@@ -69,12 +82,7 @@
 
 @layer utilities {
   .container-fluid {
-    width: 100%;
-    max-width: var(--width-page);
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: var(--spacing-page-margin);
-    padding-right: var(--spacing-page-margin);
+    @apply w-full max-w-width-page mx-auto px-page-margin-mobile md:px-page-margin;
   }
 
   .text-h1 {
