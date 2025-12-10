@@ -1,3 +1,9 @@
+{% comment %}
+  Props:
+  - product: Product
+  - show_text: Boolean
+{% endcomment %}
+
 {% liquid
   assign reviews_data = product.metafields.custom.reviews_json.value
   assign total_rating = 0

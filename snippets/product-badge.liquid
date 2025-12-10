@@ -1,3 +1,9 @@
+{% comment %}
+  Props:
+  - product: Product
+  - class: String
+{% endcomment %}
+
 {% capture badges_html %}
   {% for tag in product.tags %}
     {% assign tag_handle = tag | downcase %}

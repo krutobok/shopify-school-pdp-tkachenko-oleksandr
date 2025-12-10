@@ -76,6 +76,9 @@
     "home": "Home",
     "highly_rated": "Highly Rated",
     "sale": "Sale",
-    "new": "New"
+    "new": "New",
+    "size_fit": "Size & fit",
+    "product_notes": "Product notes",
+    "delivery_and_returns": "Delivery & returns"
   }
 }

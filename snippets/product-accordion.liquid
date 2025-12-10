@@ -1,0 +1,25 @@
+{% comment %}
+  Props:
+   - product: Product
+{% endcomment %}
+
+<div class="w-full flex flex-col gap-2">
+  {% assign size_content = product.metafields.custom.size_fit %}
+  {% if size_content != blank %}
+    {% assign title_text = 'product.size_fit' | t %}
+    {% render 'accordion-details-item', title: title_text, content: size_content %}
+  {% endif %}
+
+  {% assign notes_content = product.metafields.custom.product_notes %}
+  {% if notes_content != blank %}
+    {% assign title_text = 'product.product_notes' | t %}
+    {% render 'accordion-details-item', title: title_text, content: notes_content %}
+  {% endif %}
+
+  {% assign returns_content = product.metafields.custom.returns_policy %}
+  {% comment %} "or true" тут для тестування, як ви і робили, потім приберете {% endcomment %}
+  {% if returns_content != blank or true %}
+    {% assign title_text = 'product.delivery_and_returns' | t %}
+    {% render 'accordion-details-item', title: title_text, content: returns_content %}
+  {% endif %}
+</div>

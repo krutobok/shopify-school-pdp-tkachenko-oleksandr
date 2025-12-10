@@ -1,0 +1,30 @@
+{% comment %}
+  Props:
+  - title: String
+  - content: String | HTML
+{% endcomment %}
+
+<details class="group border border-border p-4 rounded-lg">
+  <summary
+    class="
+      w-full cursor-pointer list-none relative
+      flex justify-between items-center gap-4
+      after:content-['+']
+      group-open:after:content-['-']
+      after:flex after:items-center after:justify-center
+      after:w-4 after:h-4 after:text-sm
+      after:border after:border-foreground after:rounded-full
+      after:shrink-0
+    "
+  >
+    <span class="body-large uppercase text-foreground">
+      {{ title }}
+    </span>
+  </summary>
+
+  <div
+    class="pt-4 body-medium text-secondary [&_ul]:list-disc [&_ul]:pl-5"
+  >
+    {{ content | metafield_tag }}
+  </div>
+</details>
