@@ -1,0 +1,41 @@
+{% comment %}
+  Props:
+  - product_card: Product
+  - class: String
+{% endcomment %}
+
+<div class="group relative h-full w-full{{ class }}">
+  <a href="{{ product_card.url }}" class="block relative overflow-hidden rounded-lg mb-4 max-w-78">
+    {% if product_card.featured_image %}
+      {% assign image_alt = product_card.featured_image.alt
+        | default: product_card.title
+        | default: 'Product image'
+        | escape
+      %}
+      {{
+        product_card.featured_image
+        | image_url: width: 625, height: 625, crop: 'center'
+        | image_tag:
+          alt: image_alt,
+          class: 'w-full object-cover aspect-square rounded-lg ',
+          widths: '312, 624',
+          sizes: '88px',
+          loading: 'lazy'
+      }}
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-contain object-center aspect-square bg-gray-200' }}
+    {% endif %}
+  </a>
+
+  <div class="flex flex-col gap-2">
+    <h3 class="body-large">
+      <a href="{{ product_card.url }}">
+        {{ product_card.title }}
+      </a>
+    </h3>
+
+    <div class="body-large text-secondary">
+      {{ product_card.price | money }}
+    </div>
+  </div>
+</div>

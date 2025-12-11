@@ -89,5 +89,13 @@
     "size_fit": "Size & fit",
     "product_notes": "Product notes",
     "delivery_and_returns": "Delivery & returns"
+  },
+  "accessibility": {
+    "previous_slide": "Previous slide",
+    "next_slide": "Next slide",
+    "first_slide": "This is the first slide",
+    "last_slide": "This is the last slide",
+    "product_carousel": "Product recommendations carousel",
+    "slide": "Slide"
   }
 }

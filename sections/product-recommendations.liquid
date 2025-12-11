@@ -1,8 +1,172 @@
-<section
-  class="py-20 overflow-hidden hidden"
-  id="ProductRecommendations-{{ section.id }}"
-  data-section-id="{{ section.id }}"
-></section>
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 757px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- if recommendations.performed -%}
+  {%- for product in recommendations.products -%}
+    <div class="swiper-slide h-auto">
+      {% render 'product-card', product_card: product %}
+    </div>
+  {%- endfor -%}
+{%- else -%}
+  <section
+    class="section-{{ section.id }}-padding overflow-hidden hidden"
+    id="ProductRecommendations-{{ section.id }}"
+    data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.limit }}"
+    data-section-id="{{ section.id }}"
+  >
+    <div class="container-fluid">
+      {% if section.settings.title != blank %}
+        <h2 class="text-h2 text-center mb-8 md:mb-12">
+          {{ section.settings.title | escape }}
+        </h2>
+      {% endif %}
+
+      <div class="relative group/slider">
+        <div class="swiper" id="Swiper-{{ section.id }}">
+          <div class="swiper-wrapper" id="SwiperWrapper-{{ section.id }}"></div>
+        </div>
+
+        <button
+          id="Prev-{{ section.id }}"
+          class="
+            swiper-button-next absolute top-1/2 -translate-y-1/2 right-1 z-10 p-3
+            w-11! h-11! rounded-full bg-background border border-border
+            hidden! md:flex! items-center justify-center
+            transition-all hover:border-foreground disabled:opacity-0 disabled:invisible
+            md:-left-5!
+          "
+          aria-label="Previous slide"
+        >
+          <svg
+            class="rotate-180"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="16" height="16" fill="transparent"/>
+            <path d="M9.38329 9.85697L9.02974 10.2105L9.73684 10.9176L10.0904 10.5641L9.73684 10.2105L9.38329 9.85697ZM11.8421 8.10526L12.1957 8.45882L12.5492 8.10526L12.1957 7.75171L11.8421 8.10526ZM10.0904 5.64645L9.73684 5.29289L9.02974 6L9.38329 6.35355L9.73684 6L10.0904 5.64645ZM9.73684 10.2105L10.0904 10.5641L12.1957 8.45882L11.8421 8.10526L11.4886 7.75171L9.38329 9.85697L9.73684 10.2105ZM11.8421 8.10526L12.1957 7.75171L10.0904 5.64645L9.73684 6L9.38329 6.35355L11.4886 8.45882L11.8421 8.10526ZM11.8421 8.10526V7.60526H5V8.10526V8.60526H11.8421V8.10526Z" fill="#111111"/>
+          </svg>
+        </button>
+
+        <button
+          id="Next-{{ section.id }}"
+          class="
+            swiper-button-next absolute top-1/2 -translate-y-1/2 right-1 z-10 p-3
+            w-11! h-11! rounded-full bg-background border border-border
+            hidden! md:flex! items-center justify-center
+            transition-all hover:border-foreground disabled:opacity-0 disabled:invisible
+            md:-right-5!
+          "
+          aria-label="Next slide"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="16" height="16" fill="transparent"/>
+            <path d="M9.38329 9.85697L9.02974 10.2105L9.73684 10.9176L10.0904 10.5641L9.73684 10.2105L9.38329 9.85697ZM11.8421 8.10526L12.1957 8.45882L12.5492 8.10526L12.1957 7.75171L11.8421 8.10526ZM10.0904 5.64645L9.73684 5.29289L9.02974 6L9.38329 6.35355L9.73684 6L10.0904 5.64645ZM9.73684 10.2105L10.0904 10.5641L12.1957 8.45882L11.8421 8.10526L11.4886 7.75171L9.38329 9.85697L9.73684 10.2105ZM11.8421 8.10526L12.1957 7.75171L10.0904 5.64645L9.73684 6L9.38329 6.35355L11.4886 8.45882L11.8421 8.10526ZM11.8421 8.10526V7.60526H5V8.10526V8.60526H11.8421V8.10526Z" fill="#111111"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    class ProductRecommendations {
+      constructor(sectionId) {
+        this.sectionId = sectionId;
+        this.init();
+      }
+
+      init() {
+        this.section = document.getElementById(`ProductRecommendations-${this.sectionId}`);
+        if (!this.section) return;
+
+        this.swiperContainer = document.getElementById(`Swiper-${this.sectionId}`);
+        this.swiperWrapper = document.getElementById(`SwiperWrapper-${this.sectionId}`);
+        this.fetchRecommendations();
+      }
+
+      fetchRecommendations() {
+        const url = this.section.dataset.url;
+
+        fetch(url)
+          .then((response) => response.text())
+          .then((text) => {
+            const html = document.createElement('div');
+            html.innerHTML = text;
+
+            const recommendations = html.querySelectorAll('.swiper-slide');
+
+            if (recommendations && recommendations.length > 0) {
+              this.swiperWrapper.innerHTML = '';
+              recommendations.forEach((slide) => {
+                this.swiperWrapper.appendChild(slide);
+              });
+              this.section.classList.remove('hidden');
+              this.initCarousel();
+            }
+          })
+          .catch((e) => {
+            console.error('Error fetching recommendations:', e);
+          });
+      }
+
+      initCarousel() {
+        new Swiper(this.swiperContainer, {
+          slidesPerView: 1.1,
+          spaceBetween: 16,
+          a11y: {
+            enabled: true,
+            prevSlideMessage: '{{ "accessibility.previous_slide" | t }}',
+            nextSlideMessage: '{{ "accessibility.next_slide" | t }}',
+            firstSlideMessage: '{{ "accessibility.first_slide" | t }}',
+            lastSlideMessage: '{{ "accessibility.last_slide" | t }}',
+            notificationClass: 'swiper-notification',
+            containerMessage: '{{ "accessibility.product_carousel" | t }}',
+            itemRoleDescriptionMessage: '{{ "accessibility.slide" | t }}',
+          },
+          navigation: {
+            nextEl: document.getElementById(`Next-${this.sectionId}`),
+            prevEl: document.getElementById(`Prev-${this.sectionId}`),
+            enabled: false,
+          },
+          breakpoints: {
+            768: {
+              slidesPerView: 2.5,
+              spaceBetween: 24,
+              navigation: { enabled: true },
+            },
+            1280: {
+              slidesPerView: 4,
+              spaceBetween: 24,
+            },
+          },
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new ProductRecommendations('{{ section.id }}');
+    });
+  </script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -22,6 +186,30 @@
       "step": 1,
       "label": "Number of products",
       "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
     }
   ],
   "presets": [
