@@ -1,36 +1,75 @@
-<section>
+{%- style -%}
+  .banner-cta-{{section.id}}-content[data-position='left'] {
+    align-items: flex-start;
+  }
+  .banner-cta-{{section.id}}-content[data-position='right'] {
+    align-items: flex-end;
+  }
+  .banner-cta-{{section.id}}-content[data-position='center'] {
+    align-items: center;
+  }
+{%- endstyle -%}
+
+<section class="h-125 relative flex text-background">
   {%- if section.settings.image != blank -%}
-    {{
-      section.settings.image
-      | image_url: width: 2880
-      | image_tag: loading: 'lazy', widths: '2880', alt: section.settings.image.alt
+    {%- assign image_alt = section.settings.image.alt
+      | default: section.settings.heading
+      | default: 'Banner image'
       | escape
-    }}
+    -%}
+    <picture>
+      {%- for i in (3..13) -%}
+        {%- liquid
+          assign width = i | times: 100
+          assign width_2x = width | times: 2
+        -%}
+
+        <source
+          media="(max-width: {{ width }}px)"
+          srcset="
+            {{ section.settings.image | image_url: width: width, height: 500, crop: 'center' }} 1x,
+            {{ section.settings.image | image_url: width: width_2x, height: 1000, crop: 'center' }} 2x
+          "
+        >
+      {%- endfor -%}
+      {{
+        section.settings.image
+        | image_url: width: 2880
+        | image_tag:
+          class: 'h-125 absolute insets-0 -z-1',
+          loading: 'lazy',
+          widths: '1440, 1920, 2880',
+          size: '100vw',
+          alt: image_alt
+      }}
+    </picture>
   {%- endif -%}
 
-  <div data-position="{{ section.settings.content_position }}">
+  <div
+    class="container-fluid banner-cta-{{section.id}}-content flex flex-col my-auto max-w-162"
+    data-position="{{ section.settings.content_position }}"
+  >
     {%- if section.settings.heading != blank -%}
-      <h2>
+      <h2 class="text-h2 mb-4">
         {{ section.settings.heading | escape }}
       </h2>
     {%- endif -%}
 
     {%- if section.settings.text != blank -%}
-      <div>
+      <div class="body-large">
         {{ section.settings.text }}
       </div>
     {%- endif -%}
 
     {%- if section.settings.show_btn -%}
       {%- if section.settings.btn_label != blank and section.settings.btn_link != blank -%}
-        <div>
-          {% render 'button',
-            type: 'a',
-            text: section.settings.btn_label,
-            href: section.settings.btn_link,
-            class: section.settings.btn_style
-          %}
-        </div>
+        {% assign button_classlist = section.settings.btn_style | append: ' mt-8' %}
+        {% render 'button',
+          type: 'a',
+          text: section.settings.btn_label,
+          href: section.settings.btn_link,
+          class: button_classlist
+        %}
       {%- endif -%}
     {%- endif -%}
   </div>
@@ -101,7 +140,7 @@
       "id": "btn_style",
       "label": "Button Style",
       "options": [
-        { "value": "", "label": "Primary" },
+        { "value": "btn-primary", "label": "Primary" },
         { "value": "btn-secondary", "label": "Secondary" },
         { "value": "btn-outline", "label": "Outline" }
       ],

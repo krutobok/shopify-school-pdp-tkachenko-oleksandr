@@ -9,6 +9,7 @@
   --color-btn: var(--color-btn-bg);
   --color-btn-text: var(--color-btn-text);
   --color-btn-border: var(--color-btn-border);
+  --color-btn-secondary-hover: var(--color-btn-secondary-hover);
 
   --color-secondary: var(--color-secondary);
   --color-border: var(--color-border);
@@ -117,6 +118,9 @@
 
   .btn-primary {
     @apply bg-btn text-btn-text hover:bg-secondary;
+  }
+  .btn-secondary {
+    @apply bg-btn-text text-btn hover:bg-btn-secondary-hover;
   }
 
   .btn-outline {

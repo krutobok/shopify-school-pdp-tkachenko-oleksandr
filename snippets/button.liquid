@@ -8,7 +8,7 @@
   - disabled: Boolean
 {% endcomment %}
 
-{% capture button_classes %}btn btn-primary {{ class }}{% endcapture %}
+{% capture button_classes %}btn {{ class }}{% endcapture %}
 
 {% if type == 'a' %}
   <a href="{{ href }}" class="{{ button_classes }}">

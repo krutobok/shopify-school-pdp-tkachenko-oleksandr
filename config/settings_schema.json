@@ -95,19 +95,25 @@
         "default": "#111111"
       },
       {
+        "type": "color",
+        "id": "btn_secondary_hover",
+        "label": "Secondary Button Hover",
+        "default": "#CACACB"
+      },
+      {
         "type": "header",
         "content": "Secondary Elements"
       },
       {
         "type": "color",
         "id": "color_secondary",
-        "label": "Secondary / Accent Color",
+        "label": "Secondary",
         "default": "#737373"
       },
       {
         "type": "color",
         "id": "color_border",
-        "label": "Borders / Light Gray",
+        "label": "Borders",
         "default": "#EBEBEB"
       }
     ]

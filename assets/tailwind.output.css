@@ -38,6 +38,7 @@
     --color-btn: var(--color-btn-bg);
     --color-btn-text: var(--color-btn-text);
     --color-btn-border: var(--color-btn-border);
+    --color-btn-secondary-hover: var(--color-btn-secondary-hover);
     --color-secondary: var(--color-secondary);
     --color-border: var(--color-border);
     --spacing-width-page: var(--page-width);
@@ -260,6 +261,9 @@
   .left-4 {
     left: calc(var(--spacing) * 4);
   }
+  .-z-1 {
+    z-index: calc(1 * -1);
+  }
   .z-10 {
     z-index: 10;
   }
@@ -296,8 +300,14 @@
       max-width: 96rem;
     }
   }
+  .my-auto {
+    margin-block: auto;
+  }
   .mt-6 {
     margin-top: calc(var(--spacing) * 6);
+  }
+  .mt-8 {
+    margin-top: calc(var(--spacing) * 8);
   }
   .mr-mobile-thumbnails {
     margin-right: var(--spacing-mobile-thumbnails);
@@ -377,6 +387,9 @@
   .h-22 {
     height: calc(var(--spacing) * 22);
   }
+  .h-125 {
+    height: calc(var(--spacing) * 125);
+  }
   .h-auto {
     height: auto;
   }
@@ -431,11 +444,11 @@
   .max-w-134 {
     max-width: calc(var(--spacing) * 134);
   }
+  .max-w-162 {
+    max-width: calc(var(--spacing) * 162);
+  }
   .max-w-\[360px\] {
     max-width: 360px;
-  }
-  .min-w-72 {
-    min-width: calc(var(--spacing) * 72);
   }
   .flex-1 {
     flex: 1;
@@ -507,9 +520,6 @@
   }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .flex-col {
     flex-direction: column;
@@ -712,6 +722,9 @@
   .font-medium {
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
+  }
+  .text-background {
+    color: var(--color-background);
   }
   .text-foreground {
     color: var(--color-foreground);
@@ -1455,6 +1468,15 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-secondary);
+      }
+    }
+  }
+  .btn-secondary {
+    background-color: var(--color-btn-text);
+    color: var(--color-btn);
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-btn-secondary-hover);
       }
     }
   }
