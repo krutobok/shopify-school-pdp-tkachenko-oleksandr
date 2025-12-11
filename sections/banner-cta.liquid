@@ -63,7 +63,7 @@
 
     {%- if section.settings.show_btn -%}
       {%- if section.settings.btn_label != blank and section.settings.btn_link != blank -%}
-        {% assign button_classlist = section.settings.btn_style | append: ' mt-8' %}
+        {% assign button_classlist = section.settings.btn_style | append: ' mt-8 px-8!' %}
         {% render 'button',
           type: 'a',
           text: section.settings.btn_label,
