@@ -70,11 +70,26 @@
         "padding_top": 0,
         "padding_bottom": 80
       }
+    },
+    "banner_cta_hqUiid": {
+      "type": "banner-cta",
+      "name": "Banner CTA",
+      "settings": {
+        "image": "shopify://shop_images/Banner.jpg",
+        "heading": "Step Into Next-Level Comfort",
+        "text": "<p>Experience the perfect mix of style, support, and all-day cushioning with Nike Air Max Plus.</p>",
+        "content_position": "left",
+        "show_btn": true,
+        "btn_label": "Shop Now",
+        "btn_link": "shopify://products/nike-air-max-plus-white",
+        "btn_style": "btn-secondary"
+      }
     }
   },
   "order": [
     "product_UFwkFT",
     "product_recommendations_dgYYnW",
-    "product_reviews_VqhDT3"
+    "product_reviews_VqhDT3",
+    "banner_cta_hqUiid"
   ]
 }
