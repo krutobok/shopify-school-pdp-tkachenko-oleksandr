@@ -56,12 +56,23 @@
       "name": "Product Recommendations",
       "settings": {
         "title": "You may also like",
-        "limit": 6
+        "limit": 6,
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "product_reviews_VqhDT3": {
+      "type": "product-reviews",
+      "name": "Reviews",
+      "settings": {
+        "heading": "Reviews",
+        "reviews_count": 6
       }
     }
   },
   "order": [
     "product_UFwkFT",
-    "product_recommendations_dgYYnW"
+    "product_recommendations_dgYYnW",
+    "product_reviews_VqhDT3"
   ]
 }
