@@ -17,8 +17,8 @@
   {% endif %}
 
   {% assign returns_content = product.metafields.custom.returns_policy %}
-  {% comment %} "or true" тут для тестування, як ви і робили, потім приберете {% endcomment %}
-  {% if returns_content != blank or true %}
+
+  {% if returns_content != blank %}
     {% assign title_text = 'product.delivery_and_returns' | t %}
     {% render 'accordion-details-item', title: title_text, content: returns_content %}
   {% endif %}
