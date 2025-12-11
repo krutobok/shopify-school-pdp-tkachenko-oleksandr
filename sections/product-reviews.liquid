@@ -12,17 +12,13 @@
         {%- for review in reviews limit: limit -%}
           <article>
             <div>
-              {%- for i in (1..5) -%}
-                {%- liquid
-                  assign fill_color = 'transparent'
-                  if review.rating >= i
-                    assign fill_color = '#111111'
-                  endif
-                -%}
-                {% render 'icon-star', fill: fill_color, class: '' %}
-              {%- endfor -%}
+              {% render 'stars-rating',
+                type: 'single',
+                rating: review.rating,
+                show_text: false,
+                unique_id: forloop.index
+              %}
             </div>
-
             <div>
               {%- if review.title != blank -%}
                 <h3>
