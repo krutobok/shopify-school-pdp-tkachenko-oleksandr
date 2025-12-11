@@ -5,7 +5,7 @@
   <div class="container-fluid flex items-center justify-between">
     <button
       id="MenuBurger"
-      class="flex flex-col gap-1.5 w-6 h-6 justify-center items-center md:hidden relative z-50 cursor-pointer group order-1"
+      class="flex flex-col gap-1.5 w-6 h-6 justify-center items-center md:hidden relative z-50 cursor-pointer order-1"
       aria-label="{{ 'sections.header.menu' | t }}"
       aria-expanded="false"
       aria-controls="MenuWrapper"
@@ -79,7 +79,7 @@
     <div class="relative z-50 flex items-center justify-end order-3 md:order-4">
       <a
         href="{{ routes.cart_url }}"
-        class="relative group flex items-center justify-center w-10 h-10 md:w-auto md:h-auto"
+        class="relative group flex items-center justify-center w-10 h-10 md:w-auto md:h-auto overflow-visible!"
         aria-label="{{ 'templates.cart.cart' | t }}"
       >
         <svg

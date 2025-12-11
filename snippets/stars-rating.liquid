@@ -1,34 +1,39 @@
 {% comment %}
   Props:
-  - product: Product
+  - type: 'average' | 'single'
+  - product: Product (required if type == 'average')
+  - rating: Number (required if type == 'single')
   - show_text: Boolean
+  - unique_id: String (optional, for SVG uniqueness)
 {% endcomment %}
 
 {% liquid
-  assign reviews_data = product.metafields.custom.reviews_json.value
-  assign total_rating = 0
-  assign reviews_count = 0
+  assign rating_value = 0
+  assign count = 0
 
-  if reviews_data != blank
-    assign reviews_count = reviews_data.size
-    for review in reviews_data
-      assign total_rating = total_rating | plus: review.rating
-    endfor
+  if type == 'average'
+    assign reviews_data = product.metafields.custom.reviews_json.value
+    if reviews_data != blank
+      assign count = reviews_data.size
+      assign total_sum = 0
+      for r in reviews_data
+        assign total_sum = total_sum | plus: r.rating
+      endfor
+      if count > 0
+        assign rating_value = total_sum | times: 1.0 | divided_by: count | round: 1
+      endif
+    endif
+
+  elsif type == 'single'
+    assign rating_value = rating
   endif
-
-  if reviews_count > 0
-    assign average_rating = total_rating | times: 1.0 | divided_by: reviews_count | round: 1
-  else
-    assign average_rating = 0
-  endif
-
-  assign gradient_id = 'star-gradient-' | append: product.id | append: '-' | append: section.id
+  assign gid = 'grad-' | append: unique_id | append: '-' | append: rating_value | replace: '.', '-'
 %}
 
-<div class="flex items-center gap-1" title="{{ average_rating }} out of 5">
+<div class="flex gap-1" title="{{ rating_value }} out of 5">
   <svg width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden; visibility: hidden;">
     <defs>
-      <linearGradient id="{{ gradient_id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="{{ gid }}" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="50%" stop-color="#111111" />
         <stop offset="50%" stop-color="transparent" />
       </linearGradient>
@@ -37,23 +42,25 @@
 
   <div class="flex gap-0.5">
     {% for i in (1..5) %}
-      {%- liquid
+      {% liquid
         assign fill_color = 'transparent'
         assign threshold = i | minus: 0.5
-        if average_rating >= i
-          assign fill_color = '#111111'
-        elsif average_rating >= threshold
-          assign fill_color = 'url(#' | append: gradient_id | append: ')'
-        endif
-      -%}
 
-      {% render 'icon-star', fill: fill_color, class: 'w-4 h-4' %}
+        if rating_value >= i
+          assign fill_color = '#111111'
+
+        elsif rating_value >= threshold
+          assign fill_color = 'url(#' | append: gid | append: ')'
+        endif
+      %}
+
+      {% render 'icon-star', fill: fill_color, class: '' %}
     {% endfor %}
   </div>
 
-  {% if show_text and reviews_count > 0 %}
+  {% if show_text and type == 'average' and count > 0 %}
     <span class="body-medium text-foreground">
-      {{ average_rating }}
+      {{ rating_value }}
     </span>
   {% endif %}
 </div>

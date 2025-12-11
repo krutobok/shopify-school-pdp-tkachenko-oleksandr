@@ -106,7 +106,7 @@
           </h1>
           {% if section.settings.show_rating %}
             <div class="mb-3">
-              {% render 'stars-rating', product: product, show_text: true %}
+              {% render 'stars-rating', type: 'average', product: product, show_text: true %}
             </div>
           {% endif %}
         </div>
