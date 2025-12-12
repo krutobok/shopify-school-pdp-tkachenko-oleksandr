@@ -1,5 +1,4 @@
 {% style %}
-  {% # Loads all font variations (Bold, Italic) with display: swap %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
@@ -13,23 +12,49 @@
     --page-width: {{ settings.max_page_width }}px;
     --page-margin: {{ settings.page_margin }}px;
 
-    --color-bg: {{ settings.bg_color | default: '#FFFFFF' }};
-    --color-text: {{ settings.text_color | default: '#111111' }};
+    {% assign default_scheme = settings.color_schemes | first %}
 
-    --color-btn-bg: {{ settings.btn_bg | default: '#111111' }};
-    --color-btn-text: {{ settings.btn_text | default: '#FFFFFF' }};
-    --color-btn-border: {{ settings.btn_border | default: '#111111' }};
-    --color-btn-secondary-hover: {{ settings.btn_secondary_hover | default: '#CACACB' }};
-
-    --color-secondary: {{ settings.color_secondary | default: '#737373' }};
-    --color-border: {{ settings.color_border | default: '#EBEBEB' }};
+    --color-bg: {{ default_scheme.settings.bg_color }};
+    --color-text: {{ default_scheme.settings.text_color }};
+    --color-btn-bg: {{ default_scheme.settings.btn_bg }};
+    --color-btn-text: {{ default_scheme.settings.btn_text }};
+    --color-btn-border: {{ default_scheme.settings.btn_border }};
+    --color-btn-secondary-hover: {{ default_scheme.settings.btn_secondary_hover }};
+    --color-secondary: {{ default_scheme.settings.color_secondary }};
+    --color-border: {{ default_scheme.settings.color_border }};
   }
 
-    body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
+  {% for scheme in settings.color_schemes %}
+    .color-{{ scheme.id }} {
+      --color-bg: {{ scheme.settings.bg_color }};
+      --color-text: {{ scheme.settings.text_color }};
+      --color-btn-bg: {{ scheme.settings.btn_bg }};
+      --color-btn-text-raw: {{ scheme.settings.btn_text}};
+      --color-btn-border-raw: {{ scheme.settings.btn_border }};
+      --color-btn-secondary-hover-raw: {{ scheme.settings.btn_secondary_hover }};
+      --color-secondary-raw: {{ scheme.settings.color_secondary }};
+      --color-border-raw: {{ scheme.settings.color_border }};
+      --color-background: var(--color-bg);
+      --color-foreground: var(--color-text);
+
+      --color-btn: var(--color-btn-bg);
+      --color-btn-text: var(--color-btn-text-raw);
+      --color-btn-border: var(--color-btn-border-raw);
+      --color-btn-secondary-hover: var(--color-btn-secondary-hover-raw);
+
+      --color-secondary: var(--color-secondary-raw);
+      --color-border: var(--color-border-raw);
+
+      color: var(--color-foreground);
+      background-color: var(--color-background);
+    }
+  {% endfor %}
+
+  body {
     font-family: var(--font-body-family);
     font-weight: var(--font-body-weight);
     font-style: var(--font-body-style);
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 {% endstyle %}

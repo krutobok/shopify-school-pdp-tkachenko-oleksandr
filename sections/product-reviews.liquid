@@ -16,7 +16,10 @@
 {%- assign limit = section.settings.reviews_count -%}
 
 {% if reviews != blank %}
-  <section data-section-id="{{ section.id }}" class="section-{{ section.id }}-padding">
+  <section
+    data-section-id="{{ section.id }}"
+    class="section-{{ section.id }}-padding color-{{ section.settings.color_scheme }}"
+  >
     <div class="container-fluid">
       {%- if section.settings.heading != blank -%}
         <h2 class="text-h2 mb-8 md:mb-12 text-center">{{ section.settings.heading | escape }}</h2>
@@ -68,6 +71,16 @@
 {
   "name": "Reviews",
   "settings": [
+    {
+      "type": "header",
+      "content": "General Settings"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
     {
       "type": "text",
       "id": "heading",

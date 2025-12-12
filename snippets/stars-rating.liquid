@@ -30,11 +30,11 @@
   assign gid = 'grad-' | append: unique_id | append: '-' | append: rating_value | replace: '.', '-'
 %}
 
-<div class="flex gap-1" title="{{ rating_value }} out of 5">
+<div class="flex gap-1 text-foreground" title="{{ rating_value }} out of 5">
   <svg width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden; visibility: hidden;">
     <defs>
       <linearGradient id="{{ gid }}" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="50%" stop-color="#111111" />
+        <stop offset="50%" stop-color="var(--color-foreground)" />
         <stop offset="50%" stop-color="transparent" />
       </linearGradient>
     </defs>
@@ -47,14 +47,14 @@
         assign threshold = i | minus: 0.5
 
         if rating_value >= i
-          assign fill_color = '#111111'
+          assign fill_color = 'var(--color-foreground)'
 
         elsif rating_value >= threshold
           assign fill_color = 'url(#' | append: gid | append: ')'
         endif
       %}
 
-      {% render 'icon-star', fill: fill_color, class: '' %}
+      {% render 'icon-star', fill: fill_color, stroke: 'var(--color-foreground)' %}
     {% endfor %}
   </div>
 

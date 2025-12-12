@@ -10,7 +10,7 @@
   }
 {%- endstyle -%}
 
-<section class="h-125 relative flex text-background">
+<section class="h-125 relative flex color-{{ section.settings.color_scheme }}">
   {%- if section.settings.image != blank -%}
     {%- assign image_alt = section.settings.image.alt
       | default: section.settings.heading
@@ -36,7 +36,7 @@
         section.settings.image
         | image_url: width: 2880
         | image_tag:
-          class: 'h-125 absolute insets-0 -z-1',
+          class: 'h-125 absolute insets-0',
           loading: 'lazy',
           widths: '1440, 1920, 2880',
           size: '100vw',
@@ -46,32 +46,36 @@
   {%- endif -%}
 
   <div
-    class="container-fluid banner-cta-{{section.id}}-content flex flex-col my-auto max-w-162"
-    data-position="{{ section.settings.content_position }}"
+    class="container-fluid my-auto relative z-2"
   >
-    {%- if section.settings.heading != blank -%}
-      <h2 class="text-h2 mb-4">
-        {{ section.settings.heading | escape }}
-      </h2>
-    {%- endif -%}
-
-    {%- if section.settings.text != blank -%}
-      <div class="body-large">
-        {{ section.settings.text }}
-      </div>
-    {%- endif -%}
-
-    {%- if section.settings.show_btn -%}
-      {%- if section.settings.btn_label != blank and section.settings.btn_link != blank -%}
-        {% assign button_classlist = section.settings.btn_style | append: ' mt-8 px-8!' %}
-        {% render 'button',
-          type: 'a',
-          text: section.settings.btn_label,
-          href: section.settings.btn_link,
-          class: button_classlist
-        %}
+    <div
+      class="banner-cta-{{section.id}}-content flex flex-col max-w-162"
+      data-position="{{ section.settings.content_position }}"
+    >
+      {%- if section.settings.heading != blank -%}
+        <h2 class="text-background text-h2 mb-4">
+          {{ section.settings.heading | escape }}
+        </h2>
       {%- endif -%}
-    {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="text-background body-large">
+          {{ section.settings.text }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_btn -%}
+        {%- if section.settings.btn_label != blank and section.settings.btn_link != blank -%}
+          {% assign button_classlist = section.settings.btn_style | append: ' mt-8 px-8!' %}
+          {% render 'button',
+            type: 'a',
+            text: section.settings.btn_label,
+            href: section.settings.btn_link,
+            class: button_classlist
+          %}
+        {%- endif -%}
+      {%- endif -%}
+    </div>
   </div>
 </section>
 
@@ -79,6 +83,16 @@
 {
   "name": "Banner CTA",
   "settings": [
+    {
+      "type": "header",
+      "content": "General Settings"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
     {
       "type": "header",
       "content": "Image Settings"

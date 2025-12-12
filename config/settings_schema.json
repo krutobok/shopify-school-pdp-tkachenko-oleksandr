@@ -57,64 +57,79 @@
     "name": "Colors",
     "settings": [
       {
-        "type": "header",
-        "content": "General Colors"
-      },
-      {
-        "type": "color",
-        "id": "bg_color",
-        "label": "Background",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "color",
-        "id": "text_color",
-        "label": "Text",
-        "default": "#111111"
-      },
-      {
-        "type": "header",
-        "content": "Buttons (Primary)"
-      },
-      {
-        "type": "color",
-        "id": "btn_bg",
-        "label": "Button Background",
-        "default": "#111111"
-      },
-      {
-        "type": "color",
-        "id": "btn_text",
-        "label": "Button Text",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "color",
-        "id": "btn_border",
-        "label": "Button Border",
-        "default": "#111111"
-      },
-      {
-        "type": "color",
-        "id": "btn_secondary_hover",
-        "label": "Secondary Button Hover",
-        "default": "#CACACB"
-      },
-      {
-        "type": "header",
-        "content": "Secondary Elements"
-      },
-      {
-        "type": "color",
-        "id": "color_secondary",
-        "label": "Secondary",
-        "default": "#737373"
-      },
-      {
-        "type": "color",
-        "id": "color_border",
-        "label": "Borders",
-        "default": "#EBEBEB"
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color_background",
+            "id": "bg_gradient",
+            "label": "Background Gradient"
+          },
+          {
+            "type": "color",
+            "id": "text_color",
+            "label": "Text",
+            "default": "#111111"
+          },
+          {
+            "type": "color",
+            "id": "btn_bg",
+            "label": "Button Background",
+            "default": "#111111"
+          },
+          {
+            "type": "color",
+            "id": "btn_text",
+            "label": "Button Text",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "btn_border",
+            "label": "Button Border",
+            "default": "#111111"
+          },
+          {
+            "type": "color",
+            "id": "btn_secondary_hover",
+            "label": "Secondary Button Hover",
+            "default": "#CACACB"
+          },
+
+          {
+            "type": "color",
+            "id": "color_secondary",
+            "label": "Secondary Text",
+            "default": "#737373"
+          },
+          {
+            "type": "color",
+            "id": "color_border",
+            "label": "Borders",
+            "default": "#EBEBEB"
+          }
+        ],
+        "role": {
+          "background": {
+            "solid": "bg_color",
+            "gradient": "bg_gradient"
+          },
+          "text": "text_color",
+          "links": "text_color",
+          "icons": "text_color",
+          "primary_button": "btn_bg",
+          "on_primary_button": "btn_text",
+          "primary_button_border": "btn_border",
+          "secondary_button": "bg_color",
+          "on_secondary_button": "text_color",
+          "secondary_button_border": "color_border"
+        }
       }
     ]
   }

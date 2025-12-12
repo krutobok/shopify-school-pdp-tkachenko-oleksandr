@@ -2,7 +2,6 @@
 
 @theme {
   --font-sans: var(--font-body-family), sans-serif;
-
   --color-background: var(--color-bg);
   --color-foreground: var(--color-text);
 
@@ -11,8 +10,8 @@
   --color-btn-border: var(--color-btn-border);
   --color-btn-secondary-hover: var(--color-btn-secondary-hover);
 
-  --color-secondary: var(--color-secondary);
-  --color-border: var(--color-border);
+  --color-secondary: var(--color-secondary-raw, var(--color-secondary));
+  --color-border: var(--color-border-raw, var(--color-border));
 
   --spacing-width-page: var(--page-width);
   --spacing-page-margin: var(--page-margin);
@@ -46,7 +45,6 @@
 
 @layer components {
   .shopify-section {
-    /* Розрахунок ширини контенту (залишаємо для сумісності змінних) */
     --content-width: min(
       calc(var(--spacing-width-page) - var(--spacing-page-margin) * 2),
       calc(100% - var(--spacing-page-margin) * 2)
@@ -61,21 +59,16 @@
     grid-template-columns: var(--content-grid);
     width: 100%;
 
-    /* ВАЖЛИВО: Це прибирає горизонтальний скрол, якщо контент вилазить */
     overflow-x: hidden;
   }
 
   .shopify-section > * {
-    /* Розтягує елемент від лівого краю (1) до правого (-1) */
     grid-column: 1 / -1;
 
-    /* Страховка від переповнення ширини */
     width: 100%;
     max-width: 100%;
   }
 
-  /* Цей клас можна залишити, якщо ви захочете використовувати його 
-     явним чином для специфічних блоків */
   .shopify-section > .full-width {
     grid-column: 1 / -1;
   }

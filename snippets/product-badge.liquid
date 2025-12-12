@@ -12,7 +12,7 @@
       
       {% when 'highly rated' %}
         <div class="flex gap-1 bg-background p-2 body-medium text-foreground rounded-sm">
-          {% render 'icon-star', fill: '#111111', class: 'w-5 h-5' %} <span>{{ 'product.highly_rated' | t }}</span>
+          {% render 'icon-star', fill: 'var(--color-foreground)', stroke: 'var(--color-foreground)', class: 'w-5 h-5' %} <span>{{ 'product.highly_rated' | t }}</span>
         </div>
 
       {% when 'new' %}
