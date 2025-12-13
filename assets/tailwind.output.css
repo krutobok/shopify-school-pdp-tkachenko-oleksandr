@@ -300,9 +300,6 @@
       max-width: 96rem;
     }
   }
-  .mx-auto {
-    margin-inline: auto;
-  }
   .my-0 {
     margin-block: calc(var(--spacing) * 0);
   }
@@ -369,9 +366,6 @@
   .aspect-square {
     aspect-ratio: 1 / 1;
   }
-  .\!h-auto {
-    height: auto !important;
-  }
   .h-0 {
     height: calc(var(--spacing) * 0);
   }
@@ -413,9 +407,6 @@
   }
   .h-px {
     height: 1px;
-  }
-  .\!w-auto {
-    width: auto !important;
   }
   .w-0 {
     width: calc(var(--spacing) * 0);
@@ -1080,19 +1071,9 @@
       order: 4;
     }
   }
-  .md\:mx-0 {
-    @media (width >= 48rem) {
-      margin-inline: calc(var(--spacing) * 0);
-    }
-  }
   .md\:mx-auto {
     @media (width >= 48rem) {
       margin-inline: auto;
-    }
-  }
-  .md\:my-auto {
-    @media (width >= 48rem) {
-      margin-block: auto;
     }
   }
   .md\:mt-8 {
@@ -1165,9 +1146,9 @@
       max-height: calc(var(--spacing) * 134);
     }
   }
-  .md\:w-162 {
+  .md\:w-134 {
     @media (width >= 48rem) {
-      width: calc(var(--spacing) * 162);
+      width: calc(var(--spacing) * 134);
     }
   }
   .md\:w-auto {
@@ -1233,11 +1214,6 @@
   .md\:justify-center {
     @media (width >= 48rem) {
       justify-content: center;
-    }
-  }
-  .md\:gap-0 {
-    @media (width >= 48rem) {
-      gap: calc(var(--spacing) * 0);
     }
   }
   .md\:gap-6 {
@@ -1307,11 +1283,6 @@
   .lg\:grid-cols-3 {
     @media (width >= 64rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  .xl\:my-0 {
-    @media (width >= 80rem) {
-      margin-block: calc(var(--spacing) * 0);
     }
   }
   .xl\:mr-auto {
