@@ -197,8 +197,8 @@
           {% unless product.has_only_default_variant %}
             <div class="selector-wrapper mb-6 md:mb-8">
               <div class="flex justify-between items-center mb-3 body-medium">
-                <label>{{ 'product.select_size' | t }}</label>
-                <button type="button" class="underline">{{ 'product.size_guide' | t }}</button>
+                <p>{{ 'product.select_size' | t }}</p>
+                {% render 'size-guide', guide: product.metafields.custom.product_size_guide.value %}
               </div>
 
               {% liquid

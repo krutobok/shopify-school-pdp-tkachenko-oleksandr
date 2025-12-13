@@ -1,0 +1,123 @@
+{% comment %}
+  Props:
+  - guide: Size Guide metaobject (required)
+  - class: String (optional)
+{% endcomment %}
+
+{%- if guide != blank -%}
+  {%- assign unique_id = 'SizeGuide-' | append: section.id -%}
+  {%- assign standard_rows = guide.rows.value -%}
+
+  {%- if standard_rows != blank -%}
+    {%- liquid
+      assign all_keys_string = 'size_35,size_35_5,size_36,size_36_5,size_37,size_37_5,size_38,size_38_5,size_39,size_39_5,size_40,size_40_5,size_41,size_41_5,size_42,size_42_5,size_43,size_43_5,size_44,size_44_5,size_45,size_45_5,size_46,size_47,size_48'
+      assign all_keys = all_keys_string | split: ','
+
+      assign active_keys_string = ''
+
+      for key in all_keys
+        assign is_active = false
+        for row in standard_rows
+          assign clean_value = row[key] | strip
+          if clean_value != blank
+            assign is_active = true
+            break
+          endif
+        endfor
+
+        if is_active
+          assign active_keys_string = active_keys_string | append: key | append: ','
+        endif
+      endfor
+
+      assign active_keys = active_keys_string | split: ','
+    -%}
+
+    <div class="size-guide-container inline-block {{ class }}">
+      <button
+        type="button"
+        id="Trigger-{{ unique_id }}"
+        class="body-medium underline text-foreground hover:text-secondary transition-colors cursor-pointer"
+      >
+        {{ 'product.size_guide' | t | default: 'Size Guide' }}
+      </button>
+
+      <dialog
+        id="{{ unique_id }}"
+        class="m-auto p-0 backdrop:bg-foreground/80 max-h-[90vh] bg-background text-foreground open:animate-in open:fade-in open:zoom-in-95 open:duration-300"
+      >
+        <div class="px-4 py-8 md:px-12 md:py-12 relative">
+          <button
+            id="Close-{{ unique_id }}"
+            type="button"
+            class="cursor-pointer absolute top-2.5 right-2.5 md:top-4 md:right-6 p-2 text-foreground hover:text-secondary transition-colors outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+          >
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.5 1.5L13.5 13.5M1.5 13.5L13.5 1.5" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+
+          <div class="overflow-x-auto">
+            <table class="body-medium md:body-large">
+              <tbody>
+                {% for row in standard_rows %}
+                  <tr>
+                    <td class="mr-2 py-2 pr-2 pl-0 md:pl-2 text-center whitespace-nowrap sticky left-0 bg-background z-10">
+                      {{ row.display_title }}
+                    </td>
+
+                    {% for key in active_keys %}
+                      {%- liquid
+                        assign bg_class = ''
+
+                        assign mod_check = forloop.index0 | modulo: 2
+                        if mod_check == 0
+                          assign bg_class = 'bg-size-guide'
+                        endif
+                      -%}
+
+                      <td class="p-0 text-center min-w-12 md:min-w-19 lg:min-w-25 align-top">
+                        <div class="w-full flex items-center justify-center py-4 {{ bg_class }}">
+                          {{ row[key] | default: '-' }}
+                        </div>
+                      </td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </dialog>
+    </div>
+
+    <script>
+      (function () {
+        const dialogId = '{{ unique_id }}';
+        const triggerId = 'Trigger-{{ unique_id }}';
+        const closeId = 'Close-{{ unique_id }}';
+
+        document.addEventListener('click', function (event) {
+          const target = event.target;
+
+          const dialog = document.getElementById(dialogId);
+          if (!dialog) return;
+
+          if (target.closest('#' + triggerId)) {
+            dialog.showModal();
+            return;
+          }
+
+          if (target.closest('#' + closeId)) {
+            dialog.close();
+            return;
+          }
+
+          if (target === dialog) {
+            dialog.close();
+          }
+        });
+      })();
+    </script>
+  {%- endif -%}
+{%- endif -%}

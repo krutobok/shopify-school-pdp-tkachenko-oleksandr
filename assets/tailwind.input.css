@@ -12,6 +12,7 @@
 
   --color-secondary: var(--color-secondary-raw, var(--color-secondary));
   --color-border: var(--color-border-raw, var(--color-border));
+  --color-size-guide: #f5f5f5;
 
   --spacing-width-page: var(--page-width);
   --spacing-page-margin: var(--page-margin);
