@@ -88,7 +88,13 @@
     "new": "New",
     "size_fit": "Size & fit",
     "product_notes": "Product notes",
-    "delivery_and_returns": "Delivery & returns"
+    "delivery_and_returns": "Delivery & returns",
+    "inventory": {
+      "in_stock": "In Stock",
+      "low_stock": "Low Stock",
+      "running_out": "Running Out",
+      "out_of_stock": "Out of Stock"
+    }
   },
   "accessibility": {
     "previous_slide": "Previous slide",

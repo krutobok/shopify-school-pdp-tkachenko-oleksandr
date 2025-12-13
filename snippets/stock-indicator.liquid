@@ -1,0 +1,62 @@
+{% comment %}
+  Props:
+  - product: Product Object (required)
+  - show_indicator: Boolean (required)
+  - threshold_low: Number (optional, default: 20)
+  - threshold_crit: Number (optional, default: 5)
+  - class: String (optional)
+{% endcomment %}
+
+{%- if show_indicator -%}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+
+  {%- if current_variant and current_variant.available -%}
+    {%- liquid
+      assign user_low = threshold_low | default: 20
+      assign user_crit = threshold_crit | default: 5
+
+      if user_low <= user_crit
+        assign limit_low = 20
+        assign limit_crit = 5
+      else
+        assign limit_low = user_low
+        assign limit_crit = user_crit
+      endif
+
+      assign stock_color = 'text-green-600'
+      assign stock_bg = 'bg-green-600'
+      assign translation_key = 'product.inventory.in_stock'
+
+      if current_variant.inventory_management == 'shopify'
+        assign qty = current_variant.inventory_quantity
+
+        if qty <= 0
+          assign stock_color = 'text-gray-500'
+          assign stock_bg = 'bg-gray-500'
+          assign translation_key = 'product.inventory.out_of_stock'
+        elsif qty <= limit_crit
+          assign stock_color = 'text-red-600'
+          assign stock_bg = 'bg-red-600'
+          assign translation_key = 'product.inventory.running_out'
+        elsif qty <= limit_low
+          assign stock_color = 'text-orange-500'
+          assign stock_bg = 'bg-orange-500'
+          assign translation_key = 'product.inventory.low_stock'
+        endif
+
+        if current_variant.inventory_policy == 'continue' and qty <= 0
+          assign stock_color = 'text-green-600'
+          assign stock_bg = 'bg-green-600'
+          assign translation_key = 'product.inventory.in_stock'
+        endif
+      endif
+    -%}
+
+    <div class="stock-indicator flex items-center gap-1 body-medium font-medium {{ stock_color }} {{ class }}">
+      <span class="flex h-2.5 w-2.5 rounded-full {{ stock_bg }}"></span>
+      <span>
+        {{ translation_key | t }}
+      </span>
+    </div>
+  {%- endif -%}
+{%- endif -%}

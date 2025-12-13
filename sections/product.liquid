@@ -242,7 +242,13 @@
               </div>
             </div>
           {% endunless %}
-
+          {% render 'stock-indicator',
+            product: product,
+            show_indicator: section.settings.show_stock_indicator,
+            threshold_low: section.settings.stock_threshold_low,
+            threshold_crit: section.settings.stock_threshold_critical,
+            class: 'mb-3'
+          %}
           <div>
             {%- liquid
               if product.selected_or_first_available_variant.available
@@ -546,6 +552,36 @@
       "unit": "px",
       "label": "Bottom padding",
       "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Stock Indicator"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stock_indicator",
+      "label": "Show stock indicator",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "stock_threshold_low",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "label": "Low stock threshold",
+      "default": 20,
+      "visible_if": "{{ section.settings.show_stock_indicator }}"
+    },
+    {
+      "type": "range",
+      "id": "stock_threshold_critical",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "label": "Running out threshold",
+      "default": 5,
+      "visible_if": "{{ section.settings.show_stock_indicator }}"
     }
   ],
   "blocks": [
