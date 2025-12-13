@@ -104,19 +104,19 @@
   }
 
   .btn {
-    @apply flex items-center justify-center p-4 text-base leading-6 capitalize transition-all duration-200 cursor-pointer rounded-lg;
+    @apply flex items-center justify-center p-4 text-base leading-6 capitalize transition-all duration-200 border cursor-pointer rounded-lg;
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2;
   }
 
   .btn-primary {
-    @apply bg-btn text-btn-text hover:bg-secondary;
+    @apply bg-btn text-btn-text border-btn-border hover:bg-secondary hover:border-secondary;
   }
   .btn-secondary {
     @apply bg-btn-text text-btn hover:bg-btn-secondary-hover;
   }
 
   .btn-outline {
-    @apply bg-transparent border border-border text-foreground hover:border-foreground;
+    @apply bg-transparent border-border text-foreground hover:border-foreground;
   }
 }
