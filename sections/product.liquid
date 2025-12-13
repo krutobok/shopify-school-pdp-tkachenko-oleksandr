@@ -198,7 +198,12 @@
             <div class="selector-wrapper mb-6 md:mb-8">
               <div class="flex justify-between items-center mb-3 body-medium">
                 <p>{{ 'product.select_size' | t }}</p>
-                {% render 'size-guide', guide: product.metafields.custom.product_size_guide.value %}
+
+                {%- assign guide = product.metafields.custom.product_size_guide.value -%}
+
+                {%- if guide != blank -%}
+                  {% render 'size-guide', guide: guide %}
+                {%- endif -%}
               </div>
 
               {% liquid
