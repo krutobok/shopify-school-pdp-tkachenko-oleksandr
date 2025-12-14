@@ -648,6 +648,12 @@
   .overflow-x-auto {
     overflow-x: auto;
   }
+  .overflow-x-visible {
+    overflow-x: visible;
+  }
+  .overflow-x-visible\! {
+    overflow-x: visible !important;
+  }
   .overflow-y-auto {
     overflow-y: auto;
   }
@@ -965,14 +971,6 @@
   .backdrop\:bg-foreground {
     &::backdrop {
       background-color: var(--color-foreground);
-    }
-  }
-  .backdrop\:bg-foreground\/80 {
-    &::backdrop {
-      background-color: var(--color-foreground);
-      @supports (color: color-mix(in lab, red, red)) {
-        background-color: color-mix(in oklab, var(--color-foreground) 80%, transparent);
-      }
     }
   }
   .backdrop\:opacity-80 {
@@ -1450,6 +1448,16 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
+  .xl\:sticky {
+    @media (width >= 80rem) {
+      position: sticky;
+    }
+  }
+  .xl\:top-8 {
+    @media (width >= 80rem) {
+      top: calc(var(--spacing) * 8);
+    }
+  }
   .xl\:mr-auto {
     @media (width >= 80rem) {
       margin-right: auto;
@@ -1458,6 +1466,11 @@
   .xl\:ml-auto {
     @media (width >= 80rem) {
       margin-left: auto;
+    }
+  }
+  .xl\:h-fit {
+    @media (width >= 80rem) {
+      height: fit-content;
     }
   }
   .xl\:w-auto {
@@ -1473,6 +1486,11 @@
   .xl\:items-start {
     @media (width >= 80rem) {
       align-items: flex-start;
+    }
+  }
+  .xl\:justify-between {
+    @media (width >= 80rem) {
+      justify-content: space-between;
     }
   }
   .xl\:gap-14 {
