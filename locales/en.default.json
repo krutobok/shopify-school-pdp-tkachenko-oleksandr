@@ -102,6 +102,7 @@
     "first_slide": "This is the first slide",
     "last_slide": "This is the last slide",
     "product_carousel": "Product recommendations carousel",
-    "slide": "Slide"
+    "slide": "Slide",
+    "close": "Close"
   }
 }

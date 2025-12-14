@@ -38,21 +38,32 @@
         type="button"
         id="Trigger-{{ unique_id }}"
         class="body-medium underline text-foreground hover:text-secondary transition-colors cursor-pointer"
+        aria-haspopup="dialog"
+        aria-controls="{{ unique_id }}"
       >
         {{ 'product.size_guide' | t | default: 'Size Guide' }}
       </button>
 
       <dialog
         id="{{ unique_id }}"
+        aria-label="{{ 'product.size_guide' | t | default: 'Size Guide' }}"
         class="m-auto p-0 backdrop:bg-foreground backdrop:opacity-80 max-h-[90vh] bg-background text-foreground open:animate-in open:fade-in open:zoom-in-95 open:duration-300"
       >
         <div class="px-4 py-8 md:px-12 md:py-12 relative">
           <button
             id="Close-{{ unique_id }}"
             type="button"
+            aria-label="{{ 'accessibility.close' | t | default: 'Close' }}"
             class="cursor-pointer absolute top-2.5 right-2.5 md:top-4 md:right-6 p-2 text-foreground hover:text-secondary transition-colors outline-none focus-visible:ring-2 focus-visible:ring-foreground"
           >
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              aria-hidden="true"
+              width="15"
+              height="15"
+              viewBox="0 0 15 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path d="M1.5 1.5L13.5 13.5M1.5 13.5L13.5 1.5" stroke="currentColor" stroke-width="2"/>
             </svg>
           </button>
@@ -62,14 +73,16 @@
               <tbody>
                 {% for row in standard_rows %}
                   <tr>
-                    <td class="mr-2 py-2 pr-2 pl-0 md:pl-2 text-center whitespace-nowrap sticky left-0 bg-background z-10">
+                    <th
+                      scope="row"
+                      class="mr-2 py-2 pr-2 pl-0 md:pl-2 text-center whitespace-nowrap sticky left-0 bg-background z-10 font-normal"
+                    >
                       {{ row.display_title }}
-                    </td>
+                    </th>
 
                     {% for key in active_keys %}
                       {%- liquid
                         assign bg_class = ''
-
                         assign mod_check = forloop.index0 | modulo: 2
                         if mod_check == 0
                           assign bg_class = 'bg-size-guide'

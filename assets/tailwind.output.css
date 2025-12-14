@@ -27,6 +27,7 @@
     --text-3xl--line-height: calc(2.25 / 1.875);
     --text-5xl: 3rem;
     --text-5xl--line-height: 1;
+    --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-bold: 700;
     --radius-sm: 0.25rem;
@@ -648,12 +649,6 @@
   .overflow-x-auto {
     overflow-x: auto;
   }
-  .overflow-x-visible {
-    overflow-x: visible;
-  }
-  .overflow-x-visible\! {
-    overflow-x: visible !important;
-  }
   .overflow-y-auto {
     overflow-y: auto;
   }
@@ -825,6 +820,10 @@
   .font-medium {
     --tw-font-weight: var(--font-weight-medium);
     font-weight: var(--font-weight-medium);
+  }
+  .font-normal {
+    --tw-font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-normal);
   }
   .whitespace-nowrap {
     white-space: nowrap;
