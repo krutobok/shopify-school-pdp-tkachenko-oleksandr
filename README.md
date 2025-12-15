@@ -97,6 +97,8 @@ Dynamic inventory status: - **In stock** -- high inventory\
   ---------------------------------------------------------------------------------
   Namespace              Key                  Type           Purpose
   ---------------------- -------------------- -------------- ----------------------
+| Namespace & Key | Type | Purpose |
+| :--- | :--- | :--- |
 | `custom.related_colors` | List of Products | Links different products as color swatches. |
 | `custom.product_note` | Single Line Text | Promotional text (e.g., "Safe Checkout") in the buy box. |
 | `custom.product_notes` | Rich Text | Content for the "Description" accordion tab. |
