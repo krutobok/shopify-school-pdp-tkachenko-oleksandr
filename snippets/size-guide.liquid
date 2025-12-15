@@ -50,23 +50,8 @@
         class="m-auto p-0 backdrop:bg-foreground backdrop:opacity-80 max-h-[90vh] bg-background text-foreground open:animate-in open:fade-in open:zoom-in-95 open:duration-300"
       >
         <div class="px-4 py-8 md:px-12 md:py-12 relative">
-          <button
-            id="Close-{{ unique_id }}"
-            type="button"
-            aria-label="{{ 'accessibility.close' | t }}"
-            class="cursor-pointer absolute top-2.5 right-2.5 md:top-4 md:right-6 p-2 text-foreground hover:text-secondary transition-colors outline-none focus-visible:ring-2 focus-visible:ring-foreground"
-          >
-            <svg
-              aria-hidden="true"
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M1.5 1.5L13.5 13.5M1.5 13.5L13.5 1.5" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </button>
+          {%- assign button_id = 'Close-' | append: unique_id -%}
+          {% render 'button-close', id: button_id, class: 'absolute top-2.5 right-2.5 md:top-4 md:right-6 p-2' %}
 
           <div class="overflow-x-auto">
             <table class="body-medium md:body-large">

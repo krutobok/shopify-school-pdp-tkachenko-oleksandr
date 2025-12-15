@@ -12,9 +12,8 @@
   endfor
 -%}
 
-<style>
+{%- style -%}
   #StickyATC {
-    transition: transform 0.3s ease-in-out;
     will-change: transform;
   }
   #StickyATC.is-hidden {
@@ -23,171 +22,252 @@
   #StickyATC.is-visible {
     transform: translateY(0);
   }
-</style>
+
+  #StickyMobileDrawer {
+    transform: translateY(100%);
+  }
+  #StickyMobileDrawer.is-open {
+    transform: translateY(0);
+  }
+{%- endstyle -%}
 
 <div
   id="StickyATC"
-  class="fixed bottom-0 left-0 w-full bg-background border-t border-border z-50 is-hidden hidden md:block"
+  class="fixed bottom-0 left-0 w-full bg-background border-t border-border z-50 is-hidden"
   aria-hidden="true"
 >
-  <div class="container-fluid flex items-center justify-between py-4">
-    <div class="flex items-center gap-3">
+  <div class="container-fluid py-4">
+    <div class="hidden md:flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        {% if image %}
+          {% assign image_alt = image.alt | default: product.title | escape %}
+          {{
+            image
+            | image_url: width: 108, height: 108, crop: 'center'
+            | image_tag:
+              class: 'w-[54px] h-[54px] rounded-lg object-cover',
+              loading: 'lazy',
+              widths: '54, 108',
+              sizes: '54px',
+              alt: image_alt
+          }}
+        {% endif %}
+
+        <div class="flex flex-col gap-1">
+          <span class="body-large truncate max-w-37 md:max-w-75">{{ product.title }}</span>
+          {% render 'price', product: product %}
+        </div>
+      </div>
+
+      <div class="flex items-center md:gap-2 lg:gap-8">
+        {% assign related_colors = product.metafields.custom.related_colors.value %}
+        {% if related_colors != blank %}
+          <div class="flex items-center gap-1.5">
+            <span class="body-medium text-foreground">{{ 'product.color' | t }}</span>
+            <div class="flex gap-1.5" id="StickyColorSwatchesDesktop">
+              {% for color_prod in related_colors %}
+                <a
+                  href="{{ color_prod.url }}"
+                  class="sticky-color-link block w-6 h-6 rounded outline-none overflow-hidden hover:opacity-80 transition-opacity {% if color_prod.handle == product.handle %}border border-foreground{% endif %}"
+                  title="{{ color_prod.title }}"
+                  data-handle="{{ color_prod.handle }}"
+                  tabindex="-1"
+                >
+                  {% assign color_image_alt = image.alt | default: product.title | escape %}
+                  {{
+                    color_prod.featured_image
+                    | image_url: width: 48, height: 48, crop: 'center'
+                    | image_tag:
+                      class: 'w-full h-full object-cover pointer-events-none',
+                      loading: 'lazy',
+                      widths: '24, 48',
+                      sizes: '24px',
+                      alt: color_image_alt
+                  }}
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% form 'product', product, id: 'StickyProductFormDesktop', class: 'flex items-center md:gap-2 lg:gap-8' %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          {% unless product.has_only_default_variant %}
+            <div class="flex items-center gap-1.5">
+              <span class="body-medium text-foreground">{{- 'product.size' | t }}</span>
+
+              <div class="relative" id="StickySizeDropdownDesktop">
+                <select id="StickySizeSelectDesktop" class="hidden">
+                  {% for variant in product.variants %}
+                    {% if variant.available %}
+                      <option
+                        value="{{ variant.id }}"
+                        {% if variant.id == current_variant.id %}
+                          selected
+                        {% endif %}
+                      >
+                        {{ variant.options[size_option_index] }}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+
+                <button
+                  type="button"
+                  id="StickySizeTriggerDesktop"
+                  class="flex items-center gap-1.5 cursor-pointer focus:outline-none group"
+                  aria-expanded="false"
+                  tabindex="-1"
+                >
+                  <span id="StickySizeCurrentValueDesktop" class="body-medium text-foreground">
+                    {{ current_variant.options[size_option_index] }}
+                  </span>
+                  <svg
+                    class="w-4 h-4 transition-transform duration-200 group-aria-expanded:rotate-180"
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M4.5 6.5L7.5 9.5L10.5 6.5" stroke="currentColor" stroke-linecap="square"/>
+                  </svg>
+                </button>
+
+                <div
+                  id="StickySizeListDesktop"
+                  class="absolute bottom-full right-1/2 translate-x-1/2 mb-6 border border-border w-50 bg-background rounded-lg p-4 hidden z-50"
+                >
+                  <div class="flex flex-col gap-2.5 max-h-64 overflow-y-auto">
+                    {% for variant in product.variants %}
+                      {% if variant.available %}
+                        <button
+                          type="button"
+                          class="sticky-option-btn-desktop cursor-pointer text-center body-medium hover:underline {% if variant.id == current_variant.id %}underline{% endif %}"
+                          data-value="{{ variant.id }}"
+                          data-label="{{ variant.options[size_option_index] }}"
+                          tabindex="-1"
+                        >
+                          {{ variant.options[size_option_index] }}
+                        </button>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endunless %}
+
+          {%- liquid
+            if current_variant.available
+              assign is_disabled = false
+            else
+              assign is_disabled = true
+            endif
+            assign btn_text = 'product.add_to_cart' | t
+          -%}
+
+          {% render 'button',
+            type: 'submit',
+            name: 'add',
+            text: btn_text,
+            class: 'btn-primary px-8!',
+            disabled: is_disabled,
+            tabindex_ignore: true
+          %}
+        {% endform %}
+      </div>
+    </div>
+
+    <div class="flex md:hidden items-center justify-between gap-4">
+      <div class="flex flex-col truncate gap-0.5">
+        <span class="body-medium font-semibold truncate text-foreground">{{ product.title }}</span>
+        <div class="flex gap-1.5 text-sm">
+          {% if current_variant.compare_at_price > current_variant.price %}
+            <s class="text-secondary">{{ current_variant.compare_at_price | money }}</s>
+          {% endif %}
+          <span class="text-foreground font-medium">{{ current_variant.price | money }}</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        id="StickyMobileTriggerBtn"
+        class="btn btn-primary px-6 py-2.5 shrink-0"
+        {% unless current_variant.available %}
+          disabled
+        {% endunless %}
+      >
+        {{ 'product.add_to_cart' | t }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  id="StickyMobileDrawer"
+  class="fixed bottom-0 left-0 w-full bg-background z-50 p-4 max-h-[85vh] overflow-y-auto flex flex-col gap-6"
+>
+  {% render 'button-close', id: 'StickyMobileDrawerClose', class: 'p-2 ml-auto' %}
+  <div class="flex items-start gap-4 justify-between">
+    <div class="flex gap-3">
       {% if image %}
         {% assign image_alt = image.alt | default: product.title | escape %}
         {{
           image
-          | image_url: width: 108, height: 108, crop: 'center'
+          | image_url: width: 176, height: 176, crop: 'center'
           | image_tag:
-            class: 'w-[54px] h-[54px] rounded-lg object-cover',
+            class: 'w-22 h-22 object-cover rounded-lg',
             loading: 'lazy',
-            widths: '54, 108',
-            sizes: '54px',
+            widths: '88, 178',
+            sizes: '88px',
             alt: image_alt
         }}
       {% endif %}
-
-      <div class="flex flex-col gap-1">
-        <span class="body-large truncate max-w-37 md:max-w-75">{{ product.title }}</span>
-        {% render 'price', product: product %}
-      </div>
     </div>
 
-    <div class="flex items-center gap-8">
-      {% assign related_colors = product.metafields.custom.related_colors.value %}
-      {% if related_colors != blank %}
-        <div class="flex items-center gap-1.5">
-          <span class="body-medium text-foreground">{{ 'product.color' | t }}</span>
-          <div class="flex gap-1.5" id="StickyColorSwatches">
-            {% for color_prod in related_colors %}
-              <a
-                href="{{ color_prod.url }}"
-                class="sticky-color-link block w-6 h-6 rounded outline-none overflow-hidden hover:opacity-80 transition-opacity {% if color_prod.handle == product.handle %}border border-foreground{% endif %}"
-                title="{{ color_prod.title }}"
-                data-handle="{{ color_prod.handle }}"
-                tabindex="-1"
-              >
-                {% assign color_image_alt = image.alt | default: product.title | escape %}
-                {{
-                  color_prod.featured_image
-                  | image_url: width: 48, height: 48, crop: 'center'
-                  | image_tag:
-                    class: 'w-full h-full object-cover pointer-events-none',
-                    loading: 'lazy',
-                    widths: '24, 48',
-                    sizes: '24px',
-                    alt: color_image_alt
-                }}
-              </a>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
-
-      {% form 'product', product, id: 'StickyProductForm', class: 'flex items-center gap-8' %}
-        <input type="hidden" name="id" value="{{ current_variant.id }}">
-
-        {% unless product.has_only_default_variant %}
-          <div class="flex items-center gap-1.5">
-            <span class="body-medium text-foreground">{{- 'product.size' | t }}</span>
-
-            <div class="relative" id="StickySizeDropdown">
-              <select
-                id="StickySizeSelect"
-                name="id"
-                class="hidden"
-              >
-                {% for variant in product.variants %}
-                  {% if variant.available %}
-                    <option
-                      value="{{ variant.id }}"
-                      {% if variant.id == current_variant.id %}
-                        selected
-                      {% endif %}
-                    >
-                      {{ variant.options[size_option_index] }}
-                    </option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-
-              <button
-                type="button"
-                id="StickySizeTrigger"
-                class="flex items-center gap-1.5 cursor-pointer focus:outline-none group"
-                aria-expanded="false"
-              >
-                <span id="StickySizeCurrentValue" class="body-medium text-foreground">
-                  {{ current_variant.options[size_option_index] }}
-                </span>
-                <svg
-                  class="w-4 h-4 transition-transform duration-200 group-aria-expanded:rotate-180"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 15 15"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M4.5 6.5L7.5 9.5L10.5 6.5" stroke="currentColor" stroke-linecap="square"/>
-                </svg>
-              </button>
-
-              <div
-                id="StickySizeList"
-                class="absolute bottom-full right-1/2 translate-x-1/2 mb-6 border border-border w-50 bg-background rounded-lg p-4 hidden z-50"
-              >
-                <div class="flex flex-col gap-2.5 max-h-64 overflow-y-auto">
-                  {% for variant in product.variants %}
-                    {% if variant.available %}
-                      <button
-                        type="button"
-                        class="sticky-option-btn cursor-pointer text-center body-medium hover:underline"
-                        data-value="{{ variant.id }}"
-                        data-label="{{ variant.options[size_option_index] }}"
-                      >
-                        {{ variant.options[size_option_index] }}
-                      </button>
-                    {% endif %}
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endunless %}
-
-        {%- liquid
-          if current_variant.available
-            assign is_disabled = false
-          else
-            assign is_disabled = true
-          endif
-
-          assign btn_text = 'product.add_to_cart' | t
-        -%}
-
-        {% render 'button',
-          type: 'submit',
-          name: 'add',
-          text: btn_text,
-          class: 'btn-primary px-8!',
-          disabled: is_disabled,
-          tabindex_ignore: true
-        %}
-      {% endform %}
-    </div>
+    {% unless product.has_only_default_variant %}
+      {% render 'variant-radios',
+        product: product,
+        current_variant: current_variant,
+        input_name: 'sticky_mobile_size',
+        input_class: 'sticky-drawer-radio',
+        id_prefix: 'sticky-mobile',
+        layout_class: 'grid grid-cols-2 gap-x-2 gap-y-2.5 grow',
+        button_class: 'py-2!'
+      %}
+    {% endunless %}
   </div>
+  {% form 'product', product, id: 'StickyProductFormMobile' %}
+    <input type="hidden" name="id" value="{{ current_variant.id }}" id="StickyMobileInputId">
+    <button
+      type="submit"
+      name="add"
+      class="btn btn-primary w-full"
+      {% unless current_variant.available %}
+        disabled
+      {% endunless %}
+    >
+      {{ 'product.apply' | t }}
+    </button>
+  {% endform %}
 </div>
 
 <script>
   window.initStickyATC = function () {
     const stickyBar = document.getElementById('StickyATC');
-    const hiddenSelect = document.getElementById('StickySizeSelect');
-    const stickyForm = document.getElementById('StickyProductForm');
-    const stickyInput = stickyForm ? stickyForm.querySelector('input[name="id"]') : null;
 
-    const triggerBtn = document.getElementById('StickySizeTrigger');
-    const dropdownList = document.getElementById('StickySizeList');
-    const currentValueText = document.getElementById('StickySizeCurrentValue');
-    const optionBtns = document.querySelectorAll('.sticky-option-btn');
+    const hiddenSelectDesktop = document.getElementById('StickySizeSelectDesktop');
+    const triggerBtnDesktop = document.getElementById('StickySizeTriggerDesktop');
+    const dropdownListDesktop = document.getElementById('StickySizeListDesktop');
+    const optionBtnsDesktop = document.querySelectorAll('.sticky-option-btn-desktop');
+
+    const mobileTriggerBtn = document.getElementById('StickyMobileTriggerBtn');
+    const mobileDrawer = document.getElementById('StickyMobileDrawer');
+    const mobileCloseBtn = document.getElementById('StickyMobileDrawerClose');
+    const mobileSizeRadios = document.querySelectorAll('.sticky-drawer-radio');
+    const mobileInputId = document.getElementById('StickyMobileInputId');
 
     const mainForm = document.querySelector('form[action*="/cart/add"]');
     const mainBtn = mainForm ? mainForm.querySelector('button[type="submit"]') : null;
@@ -204,9 +284,9 @@
             } else {
               stickyBar.classList.add('is-hidden');
               stickyBar.classList.remove('is-visible');
-              if (dropdownList) {
-                dropdownList.classList.add('hidden');
-                triggerBtn.setAttribute('aria-expanded', 'false');
+              if (dropdownListDesktop) {
+                dropdownListDesktop.classList.add('hidden');
+                if (triggerBtnDesktop) triggerBtnDesktop.setAttribute('aria-expanded', 'false');
               }
             }
           });
@@ -216,66 +296,90 @@
       window.stickyObserver.observe(mainBtn);
     }
 
-    if (triggerBtn && dropdownList) {
-      const newTrigger = triggerBtn.cloneNode(true);
-      triggerBtn.parentNode.replaceChild(newTrigger, triggerBtn);
+    if (triggerBtnDesktop && dropdownListDesktop) {
+      const newTrigger = triggerBtnDesktop.cloneNode(true);
+      triggerBtnDesktop.parentNode.replaceChild(newTrigger, triggerBtnDesktop);
 
       newTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
         const isExpanded = newTrigger.getAttribute('aria-expanded') === 'true';
-
         if (isExpanded) {
-          dropdownList.classList.add('hidden');
+          dropdownListDesktop.classList.add('hidden');
           newTrigger.setAttribute('aria-expanded', 'false');
         } else {
-          dropdownList.classList.remove('hidden');
+          dropdownListDesktop.classList.remove('hidden');
           newTrigger.setAttribute('aria-expanded', 'true');
         }
       });
 
-      optionBtns.forEach((btn) => {
+      optionBtnsDesktop.forEach((btn) => {
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
 
         newBtn.addEventListener('click', (e) => {
           const value = newBtn.dataset.value;
           const label = newBtn.dataset.label;
-
-          const currentTextSpan = document.getElementById('StickySizeCurrentValue');
+          const currentTextSpan = document.getElementById('StickySizeCurrentValueDesktop');
           if (currentTextSpan) currentTextSpan.textContent = label;
 
-          if (hiddenSelect) {
-            hiddenSelect.value = value;
-            hiddenSelect.dispatchEvent(new Event('change'));
+          if (hiddenSelectDesktop) {
+            hiddenSelectDesktop.value = value;
+            hiddenSelectDesktop.dispatchEvent(new Event('change'));
           }
-
-          dropdownList.classList.add('hidden');
-          document.getElementById('StickySizeTrigger').setAttribute('aria-expanded', 'false');
-
-          document.querySelectorAll('.sticky-option-btn').forEach((b) => {
-            b.classList.remove('border-foreground', 'bg-gray-50');
-            b.classList.add('border-gray-200');
-          });
-          newBtn.classList.remove('border-gray-200');
-          newBtn.classList.add('border-foreground', 'bg-gray-50');
+          dropdownListDesktop.classList.add('hidden');
+          document.getElementById('StickySizeTriggerDesktop').setAttribute('aria-expanded', 'false');
         });
       });
 
       document.addEventListener('click', (e) => {
-        if (!dropdownList.contains(e.target) && !newTrigger.contains(e.target)) {
-          dropdownList.classList.add('hidden');
+        if (!dropdownListDesktop.contains(e.target) && !newTrigger.contains(e.target)) {
+          dropdownListDesktop.classList.add('hidden');
           newTrigger.setAttribute('aria-expanded', 'false');
         }
       });
     }
 
-    if (hiddenSelect) {
-      const newSelect = hiddenSelect.cloneNode(true);
-      hiddenSelect.parentNode.replaceChild(newSelect, hiddenSelect);
+    const closeDrawer = () => {
+      mobileDrawer.classList.remove('is-open');
+      document.body.style.overflow = '';
+    };
+
+    const openDrawer = () => {
+      mobileDrawer.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    };
+
+    if (mobileTriggerBtn && mobileDrawer) {
+      const newMobileTrigger = mobileTriggerBtn.cloneNode(true);
+      mobileTriggerBtn.parentNode.replaceChild(newMobileTrigger, mobileTriggerBtn);
+      newMobileTrigger.addEventListener('click', openDrawer);
+
+      const newMobileCloseBtn = mobileCloseBtn.cloneNode(true);
+      mobileCloseBtn.parentNode.replaceChild(newMobileCloseBtn, mobileCloseBtn);
+      newMobileCloseBtn.addEventListener('click', closeDrawer);
+
+      mobileSizeRadios.forEach((radio) => {
+        radio.addEventListener('change', (e) => {
+          const selectedValue = e.target.value;
+          if (mobileInputId) mobileInputId.value = selectedValue;
+          const mainRadio = document.querySelector(`input.variant-radio[value="${selectedValue}"]`);
+          if (mainRadio) {
+            mainRadio.checked = true;
+            mainRadio.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+      });
+    }
+
+    if (hiddenSelectDesktop) {
+      const newSelect = hiddenSelectDesktop.cloneNode(true);
+      hiddenSelectDesktop.parentNode.replaceChild(newSelect, hiddenSelectDesktop);
 
       newSelect.addEventListener('change', (e) => {
         const selectedVariantId = e.target.value;
-        if (stickyInput) stickyInput.value = selectedVariantId;
+        const stickyInputDesktop = document.querySelector('#StickyProductFormDesktop input[name="id"]');
+        if (stickyInputDesktop) stickyInputDesktop.value = selectedVariantId;
+
         const mainRadio = document.querySelector(`input.variant-radio[value="${selectedVariantId}"]`);
         if (mainRadio) {
           mainRadio.checked = true;
@@ -289,19 +393,15 @@
       stickyColorLinks.forEach((link) => {
         const newLink = link.cloneNode(true);
         link.parentNode.replaceChild(newLink, link);
-
         newLink.addEventListener('click', function (e) {
           e.preventDefault();
           const href = this.getAttribute('href');
           const mainColorLink = document.querySelector(`.color-swatch-link[href="${href}"]`);
           if (mainColorLink) {
-            mainColorLink.dispatchEvent(
-              new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-              })
-            );
+            mainColorLink.dispatchEvent(new MouseEvent('click', { view: window, bubbles: true, cancelable: true }));
+          }
+          if (mobileDrawer && mobileDrawer.classList.contains('is-open')) {
+            closeDrawer();
           }
         });
       });

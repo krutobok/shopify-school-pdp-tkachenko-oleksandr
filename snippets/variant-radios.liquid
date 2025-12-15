@@ -1,0 +1,51 @@
+{% comment %}
+  Props:
+  - product: Product Object (required)
+  - current_variant: Variant Object (required)
+  - input_name: String (required)
+  - input_class: String (required)
+  - id_prefix: String (required)
+  - layout_class: String (optional)
+  - button_class: String (optional)
+{% endcomment %}
+
+{%- liquid
+  assign size_option_index = -1
+  for option in product.options
+    assign option_downcased = option | downcase
+    if option_downcased contains 'size' or option_downcased contains 'розмір'
+      assign size_option_index = forloop.index0
+      break
+    endif
+  endfor
+-%}
+
+<div class="{{ layout_class | default: 'grid gap-2 grid-cols-2 md:grid-cols-3' }}">
+  {% for variant in product.variants %}
+    <label class="cursor-pointer group relative">
+      <input
+        type="radio"
+        name="{{ input_name }}"
+        value="{{ variant.id }}"
+        id="{{ id_prefix }}-radio-{{ variant.id }}"
+        class="{{ input_class }} peer sr-only"
+        {% if variant.id == current_variant.id %}
+          checked
+        {% endif %}
+        {% unless variant.available %}
+          disabled
+        {% endunless %}
+      >
+      <div
+        class="
+          btn btn-outline w-full body-medium! uppercase!
+          peer-checked:border-foreground
+          peer-focus-visible:ring-2 peer-focus-visible:ring-foreground
+          peer-disabled:bg-gray-100 peer-disabled:border-gray-200 peer-disabled:text-gray-400 peer-disabled:cursor-not-allowed {{ button_class }}
+        "
+      >
+        {{ variant.options[size_option_index] }}
+      </div>
+    </label>
+  {% endfor %}
+</div>

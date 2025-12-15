@@ -202,51 +202,19 @@
                 <p>{{ 'product.select_size' | t }}</p>
 
                 {%- assign guide = product.metafields.custom.product_size_guide.value -%}
-
                 {%- if guide != blank -%}
                   {% render 'size-guide', guide: guide %}
                 {%- endif -%}
               </div>
 
-              {% liquid
-                assign size_index = 0
-                for option in product.options
-                  assign option_downcased = option | downcase
-                  if option_downcased contains 'size' or option_downcased contains 'розмір'
-                    assign size_index = forloop.index0
-                  endif
-                endfor
+              {% render 'variant-radios',
+                product: product,
+                current_variant: product.selected_or_first_available_variant,
+                input_name: 'id',
+                input_class: 'variant-radio',
+                id_prefix: 'main',
+                layout_class: 'grid gap-2 grid-cols-2 md:grid-cols-3'
               %}
-
-              <div class="grid gap-2 grid-cols-2 md:grid-cols-3">
-                {% for variant in product.variants %}
-                  <label class="cursor-pointer group">
-                    <input
-                      type="radio"
-                      name="id"
-                      value="{{ variant.id }}"
-                      id="variant-radio-{{ variant.id }}"
-                      class="peer sr-only variant-radio"
-                      {% if product.selected_or_first_available_variant.id == variant.id %}
-                        checked
-                      {% endif %}
-                      {% unless variant.available %}
-                        disabled
-                      {% endunless %}
-                    >
-                    <div
-                      class="
-                        btn btn-outline w-full body-medium! uppercase!
-                        peer-checked:border-foreground
-                        peer-focus-visible:ring-2 peer-focus-visible:ring-foreground
-                        peer-disabled:bg-gray-100 peer-disabled:border-gray-200 peer-disabled:text-gray-400 peer-disabled:cursor-not-allowed
-                      "
-                    >
-                      {{ variant.options[size_index] }}
-                    </div>
-                  </label>
-                {% endfor %}
-              </div>
             </div>
           {% endunless %}
           {% render 'stock-indicator',
