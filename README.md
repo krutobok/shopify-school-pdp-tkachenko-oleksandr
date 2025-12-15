@@ -51,12 +51,12 @@ The project implements a comprehensive product page experience with the
 following sections:
 
 -   **Main Product Section** -- core product details, image gallery, and
-    purchase form\
+    purchase form
 -   **Banner with CTA** -- promotional banner with a call-to-action
-    button\
+    button
 -   **Recommended Products** -- "You may also like" block with related
-    items\
--   **Reviews Block** -- customer testimonials section\
+    items
+-   **Reviews Block** -- customer testimonials section
 -   **Accordion** -- collapsible tabs for Description, Shipping, and
     Returns
 
@@ -64,8 +64,8 @@ following sections:
 
 ### Sticky Add-to-Cart
 
--   Floating bar for Desktop & Mobile\
--   Appears only when the main "Add to Cart" button is out of view\
+-   Floating bar for Desktop & Mobile
+-   Appears only when the main "Add to Cart" button is out of view
 -   Includes product info, variant selectors, and purchase button
 
 ### Variant Image Change
@@ -80,14 +80,14 @@ following sections:
 
 ### Product Stock Indicator
 
-Dynamic inventory status: - **In stock** -- high inventory\
-- **Low stock** -- medium inventory\
+Dynamic inventory status: - **In stock** -- high inventory
+- **Low stock** -- medium inventory
 - **Running out** -- critical inventory
 
 ### Size Guide (Metaobjects)
 
--   Modal popup powered by Shopify Metaobjects\
--   Content (images, tables) is loaded dynamically\
+-   Modal popup powered by Shopify Metaobjects
+-   Content (images, tables) is loaded dynamically
 -   Depends on the assigned size standard
 
 ## Data Structure (Metafields & Metaobjects)
