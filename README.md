@@ -3,13 +3,13 @@
 This repository contains a custom Product Page implementation for a
 Shopify store, built using **Shopify CLI** and **Liquid**.
 
-## 🔗 Links
+## Links
 
 -   **Development Store:** https://tkachenko-oleksandr-test-store.myshopify.com/products/nike-air-max-plus-white?preview_theme_id=184300896565
 -   **Store Password:** nowvol
 -   **GitHub Repository:** https://github.com/krutobok/shopify-school-homepage-tkachenko-oleksandr/tree/main
 
-## 🛠 Technologies Used
+## Technologies Used
 
 -   **Shopify CLI**
 -   **Liquid** 
@@ -17,7 +17,7 @@ Shopify store, built using **Shopify CLI** and **Liquid**.
 -   **JavaScript** (Vanilla ES6+)
 -   **Swiper** 
 
-## 🚀 How to Run Locally
+## How to Run Locally
 
 1.  Clone the repository:
 
@@ -45,7 +45,7 @@ Shopify store, built using **Shopify CLI** and **Liquid**.
 
 5.  Open the provided preview URL in your browser.
 
-## ✅ Implemented Sections & Features
+## Implemented Sections & Features
 
 The project implements a comprehensive product page experience with the
 following sections:
