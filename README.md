@@ -1,160 +1,117 @@
-<h1 align="center" style="position: relative;">
-  <br>
-    <img src="./assets/shoppy-x-ray.svg" alt="logo" width="200">
-  <br>
-  Shopify Skeleton Theme
-</h1>
+# Shopify School PDP Tkachenko Oleksandr
 
-A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
+This repository contains a custom Product Page implementation for a
+Shopify store, built using **Shopify CLI** and **Liquid**.
 
-<p align="center">
-  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shopify/skeleton-theme/actions/workflows/ci.yml/badge.svg"></a>
-</p>
+## 🔗 Links
 
-## Getting started
+-   **Development Store:** \[Вставте посилання на магазин\]
+-   **Store Password:** `[Вставте пароль]`
+-   **GitHub Repository:** \[Вставте посилання на репозиторій\]
 
-### Prerequisites
+## 🛠 Technologies Used
 
-Before starting, ensure you have the latest Shopify CLI installed:
+-   **Shopify CLI**
+-   **Liquid** 
+-   **HTML / CSS** (Tailwind)
+-   **JavaScript** (Vanilla ES6+)
+-   **Swiper** 
 
-- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli) – helps you download, upload, preview themes, and streamline your workflows
+## 🚀 How to Run Locally
 
-If you use VS Code:
+1.  Clone the repository:
 
-- [Shopify Liquid VS Code Extension](https://shopify.dev/docs/storefronts/themes/tools/shopify-liquid-vscode) – provides syntax highlighting, linting, inline documentation, and auto-completion specifically designed for Liquid templates
+    ``` bash
+    git clone [Вставте посилання на репозиторій]
+    ```
 
-### Clone
+2.  Navigate to the project folder:
 
-Clone this repository using Git or Shopify CLI:
+    ``` bash
+    cd [Назва вашої папки]
+    ```
 
-```bash
-git clone git@github.com:Shopify/skeleton-theme.git
-# or
-shopify theme init
-```
+3.  Install dependencies:
 
-### Preview
+    ``` bash
+    npm install
+    ```
 
-Preview this theme using Shopify CLI:
+4.  Start the development server:
 
-```bash
-shopify theme dev
-```
+    ``` bash
+    shopify theme dev
+    ```
 
-## Theme architecture
+5.  Open the provided preview URL in your browser.
 
-```bash
-.
-├── assets          # Stores static assets (CSS, JS, images, fonts, etc.)
-├── blocks          # Reusable, nestable, customizable UI components
-├── config          # Global theme settings and customization options
-├── layout          # Top-level wrappers for pages (layout templates)
-├── locales         # Translation files for theme internationalization
-├── sections        # Modular full-width page components
-├── snippets        # Reusable Liquid code or HTML fragments
-└── templates       # Templates combining sections to define page structures
-```
+## ✅ Implemented Sections & Features
 
-To learn more, refer to the [theme architecture documentation](https://shopify.dev/docs/storefronts/themes/architecture).
+The project implements a comprehensive product page experience with the
+following sections:
 
-### Templates
+-   **Main Product Section** -- core product details, image gallery, and
+    purchase form\
+-   **Banner with CTA** -- promotional banner with a call-to-action
+    button\
+-   **Recommended Products** -- "You may also like" block with related
+    items\
+-   **Reviews Block** -- customer testimonials section\
+-   **Accordion** -- collapsible tabs for Description, Shipping, and
+    Returns
 
-[Templates](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) control what's rendered on each type of page in a theme.
+## Bonus Features
 
-The Skeleton Theme scaffolds [JSON templates](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates) to make it easy for merchants to customize their store.
+### Sticky Add-to-Cart
 
-None of the template types are required, and not all of them are included in the Skeleton Theme. Refer to the [template types reference](https://shopify.dev/docs/storefronts/themes/architecture/templates#template-types) for a full list.
+-   Floating bar for Desktop & Mobile\
+-   Appears only when the main "Add to Cart" button is out of view\
+-   Includes product info, variant selectors, and purchase button
 
-### Sections
+### Variant Image Change
 
-[Sections](https://shopify.dev/docs/storefronts/themes/architecture/sections) are Liquid files that allow you to create reusable modules of content that can be customized by merchants. They can also include blocks which allow merchants to add, remove, and reorder content within a section.
+-   Selecting a color variant updates the main gallery image
+    automatically
 
-Sections are made customizable by including a `{% schema %}` in the body. For more information, refer to the [section schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/sections/section-schema).
+### Scroll Gallery (Desktop)
 
-### Blocks
+**Sticky Gallery (Desktop):**
+   - A modern gallery layout where the images remain fixed (sticky) on the left side while the user scrolls through the product details on the right. 
 
-[Blocks](https://shopify.dev/docs/storefronts/themes/architecture/blocks) let developers create flexible layouts by breaking down sections into smaller, reusable pieces of Liquid. Each block has its own set of settings, and can be added, removed, and reordered within a section.
+### Product Stock Indicator
 
-Blocks are made customizable by including a `{% schema %}` in the body. For more information, refer to the [block schema documentation](https://shopify.dev/docs/storefronts/themes/architecture/blocks/theme-blocks/schema).
+Dynamic inventory status: - **In stock** -- high inventory\
+- **Low stock** -- medium inventory\
+- **Running out** -- critical inventory
 
-## Schemas
+### Size Guide (Metaobjects)
 
-When developing components defined by schema settings, we recommend these guidelines to simplify your code:
+-   Modal popup powered by Shopify Metaobjects\
+-   Content (images, tables) is loaded dynamically\
+-   Depends on the assigned size standard
 
-- **Single property settings**: For settings that correspond to a single CSS property, use CSS variables:
+## Data Structure (Metafields & Metaobjects)
 
-  ```liquid
-  <div class="collection" style="--gap: {{ block.settings.gap }}px">
-    ...
-  </div>
+### 1. Product Metafields
 
-  {% stylesheet %}
-    .collection {
-      gap: var(--gap);
-    }
-  {% endstylesheet %}
+  ---------------------------------------------------------------------------------
+  Namespace              Key                  Type           Purpose
+  ---------------------- -------------------- -------------- ----------------------
+| `custom.related_colors` | List of Products | Links different products as color swatches. |
+| `custom.product_note` | Single Line Text | Promotional text (e.g., "Safe Checkout") in the buy box. |
+| `custom.product_notes` | Rich Text | Content for the "Description" accordion tab. |
+| `custom.size_fit` | Rich Text | Content for the "Size & Fit" or details accordion tab. |
+| `custom.returns_policy` | Rich Text | Content for the "Returns" accordion tab. |
+| `custom.reviews_json` | JSON | Data structure containing customer reviews. |
+| `custom.product_size_guide` | Metaobject Reference | Links the product to a specific `Size Guide`. |
+  ---------------------------------------------------------------------------------
 
-  {% schema %}
-  {
-    "settings": [{
-      "type": "range",
-      "label": "gap",
-      "id": "gap",
-      "min": 0,
-      "max": 100,
-      "unit": "px",
-      "default": 0,
-    }]
-  }
-  {% endschema %}
-  ```
+### 2. Metaobjects
 
-- **Multiple property settings**: For settings that control multiple CSS properties, use CSS classes:
+**Type:** Size Standard (`size_standard`)
 
-  ```liquid
-  <div class="collection {{ block.settings.layout }}">
-    ...
-  </div>
-
-  {% stylesheet %}
-    .collection--full-width {
-      /* multiple styles */
-    }
-    .collection--narrow {
-      /* multiple styles */
-    }
-  {% endstylesheet %}
-
-  {% schema %}
-  {
-    "settings": [{
-      "type": "select",
-      "id": "layout",
-      "label": "layout",
-      "values": [
-        { "value": "collection--full-width", "label": "t:options.full" },
-        { "value": "collection--narrow", "label": "t:options.narrow" }
-      ]
-    }]
-  }
-  {% endschema %}
-  ```
-
-## CSS & JavaScript
-
-For CSS and JavaScript, we recommend using the [`{% stylesheet %}`](https://shopify.dev/docs/api/liquid/tags#stylesheet) and [`{% javascript %}`](https://shopify.dev/docs/api/liquid/tags/javascript) tags. They can be included multiple times, but the code will only appear once.
-
-### `critical.css`
-
-The Skeleton Theme explicitly separates essential CSS necessary for every page into a dedicated `critical.css` file.
-
-## Contributing
-
-We're excited for your contributions to the Skeleton Theme! This repository aims to remain as lean, lightweight, and fundamental as possible, and we kindly ask your contributions to align with this intention.
-
-Visit our [CONTRIBUTING.md](./CONTRIBUTING.md) for a detailed overview of our process, guidelines, and recommendations.
-
-## License
-
-Skeleton Theme is open-sourced under the [MIT](./LICENSE.md) License.
+  Field Name    Key           Type               Purpose
+  ------------- ------------- ------------------ ---------------------------
+  Name          name          Single Line Text   Guide identifier
+  Image         image         File (Image)       Visual size chart
+  Description   description   Rich Text          HTML table with size grid
