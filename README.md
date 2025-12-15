@@ -73,9 +73,7 @@ following sections:
 -   Selecting a color variant updates the main gallery image
     automatically
 
-### Scroll Gallery (Desktop)
-
-**Sticky Gallery (Desktop):**
+### Sticky Gallery (Desktop):
    - A modern gallery layout where the images remain fixed (sticky) on the left side while the user scrolls through the product details on the right. 
 
 ### Product Stock Indicator
