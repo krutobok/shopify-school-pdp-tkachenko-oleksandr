@@ -1,0 +1,312 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign image = current_variant.featured_image | default: product.featured_image
+
+  assign size_option_index = -1
+  for option in product.options
+    assign option_downcased = option | downcase
+    if option_downcased contains 'size' or option_downcased contains 'розмір'
+      assign size_option_index = forloop.index0
+      break
+    endif
+  endfor
+-%}
+
+<style>
+  #StickyATC {
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
+  }
+  #StickyATC.is-hidden {
+    transform: translateY(100%);
+  }
+  #StickyATC.is-visible {
+    transform: translateY(0);
+  }
+</style>
+
+<div
+  id="StickyATC"
+  class="fixed bottom-0 left-0 w-full bg-background border-t border-border z-50 is-hidden hidden md:block"
+  aria-hidden="true"
+>
+  <div class="container-fluid flex items-center justify-between py-4">
+    <div class="flex items-center gap-3">
+      {% if image %}
+        {% assign image_alt = image.alt | default: product.title | escape %}
+        {{
+          image
+          | image_url: width: 108, height: 108, crop: 'center'
+          | image_tag:
+            class: 'w-[54px] h-[54px] rounded-lg object-cover',
+            loading: 'lazy',
+            widths: '54, 108',
+            sizes: '54px',
+            alt: image_alt
+        }}
+      {% endif %}
+
+      <div class="flex flex-col gap-1">
+        <span class="body-large truncate max-w-37 md:max-w-75">{{ product.title }}</span>
+        {% render 'price', product: product %}
+      </div>
+    </div>
+
+    <div class="flex items-center gap-8">
+      {% assign related_colors = product.metafields.custom.related_colors.value %}
+      {% if related_colors != blank %}
+        <div class="flex items-center gap-1.5">
+          <span class="body-medium text-foreground">{{ 'product.color' | t }}</span>
+          <div class="flex gap-1.5" id="StickyColorSwatches">
+            {% for color_prod in related_colors %}
+              <a
+                href="{{ color_prod.url }}"
+                class="sticky-color-link block w-6 h-6 rounded outline-none overflow-hidden hover:opacity-80 transition-opacity {% if color_prod.handle == product.handle %}border border-foreground{% endif %}"
+                title="{{ color_prod.title }}"
+                data-handle="{{ color_prod.handle }}"
+                tabindex="-1"
+              >
+                {% assign color_image_alt = image.alt | default: product.title | escape %}
+                {{
+                  color_prod.featured_image
+                  | image_url: width: 48, height: 48, crop: 'center'
+                  | image_tag:
+                    class: 'w-full h-full object-cover pointer-events-none',
+                    loading: 'lazy',
+                    widths: '24, 48',
+                    sizes: '24px',
+                    alt: color_image_alt
+                }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% form 'product', product, id: 'StickyProductForm', class: 'flex items-center gap-8' %}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+        {% unless product.has_only_default_variant %}
+          <div class="flex items-center gap-1.5">
+            <span class="body-medium text-foreground">{{- 'product.size' | t }}</span>
+
+            <div class="relative" id="StickySizeDropdown">
+              <select
+                id="StickySizeSelect"
+                name="id"
+                class="hidden"
+              >
+                {% for variant in product.variants %}
+                  {% if variant.available %}
+                    <option
+                      value="{{ variant.id }}"
+                      {% if variant.id == current_variant.id %}
+                        selected
+                      {% endif %}
+                    >
+                      {{ variant.options[size_option_index] }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+
+              <button
+                type="button"
+                id="StickySizeTrigger"
+                class="flex items-center gap-1.5 cursor-pointer focus:outline-none group"
+                aria-expanded="false"
+              >
+                <span id="StickySizeCurrentValue" class="body-medium text-foreground">
+                  {{ current_variant.options[size_option_index] }}
+                </span>
+                <svg
+                  class="w-4 h-4 transition-transform duration-200 group-aria-expanded:rotate-180"
+                  width="15"
+                  height="15"
+                  viewBox="0 0 15 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M4.5 6.5L7.5 9.5L10.5 6.5" stroke="currentColor" stroke-linecap="square"/>
+                </svg>
+              </button>
+
+              <div
+                id="StickySizeList"
+                class="absolute bottom-full right-1/2 translate-x-1/2 mb-6 border border-border w-50 bg-background rounded-lg p-4 hidden z-50"
+              >
+                <div class="flex flex-col gap-2.5 max-h-64 overflow-y-auto">
+                  {% for variant in product.variants %}
+                    {% if variant.available %}
+                      <button
+                        type="button"
+                        class="sticky-option-btn cursor-pointer text-center body-medium hover:underline"
+                        data-value="{{ variant.id }}"
+                        data-label="{{ variant.options[size_option_index] }}"
+                      >
+                        {{ variant.options[size_option_index] }}
+                      </button>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endunless %}
+
+        {%- liquid
+          if current_variant.available
+            assign is_disabled = false
+          else
+            assign is_disabled = true
+          endif
+
+          assign btn_text = 'product.add_to_cart' | t
+        -%}
+
+        {% render 'button',
+          type: 'submit',
+          name: 'add',
+          text: btn_text,
+          class: 'btn-primary px-8!',
+          disabled: is_disabled,
+          tabindex_ignore: true
+        %}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+<script>
+  window.initStickyATC = function () {
+    const stickyBar = document.getElementById('StickyATC');
+    const hiddenSelect = document.getElementById('StickySizeSelect');
+    const stickyForm = document.getElementById('StickyProductForm');
+    const stickyInput = stickyForm ? stickyForm.querySelector('input[name="id"]') : null;
+
+    const triggerBtn = document.getElementById('StickySizeTrigger');
+    const dropdownList = document.getElementById('StickySizeList');
+    const currentValueText = document.getElementById('StickySizeCurrentValue');
+    const optionBtns = document.querySelectorAll('.sticky-option-btn');
+
+    const mainForm = document.querySelector('form[action*="/cart/add"]');
+    const mainBtn = mainForm ? mainForm.querySelector('button[type="submit"]') : null;
+
+    if (window.stickyObserver) window.stickyObserver.disconnect();
+
+    if (mainBtn && stickyBar) {
+      window.stickyObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+              stickyBar.classList.remove('is-hidden');
+              stickyBar.classList.add('is-visible');
+            } else {
+              stickyBar.classList.add('is-hidden');
+              stickyBar.classList.remove('is-visible');
+              if (dropdownList) {
+                dropdownList.classList.add('hidden');
+                triggerBtn.setAttribute('aria-expanded', 'false');
+              }
+            }
+          });
+        },
+        { threshold: 0 }
+      );
+      window.stickyObserver.observe(mainBtn);
+    }
+
+    if (triggerBtn && dropdownList) {
+      const newTrigger = triggerBtn.cloneNode(true);
+      triggerBtn.parentNode.replaceChild(newTrigger, triggerBtn);
+
+      newTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanded = newTrigger.getAttribute('aria-expanded') === 'true';
+
+        if (isExpanded) {
+          dropdownList.classList.add('hidden');
+          newTrigger.setAttribute('aria-expanded', 'false');
+        } else {
+          dropdownList.classList.remove('hidden');
+          newTrigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      optionBtns.forEach((btn) => {
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener('click', (e) => {
+          const value = newBtn.dataset.value;
+          const label = newBtn.dataset.label;
+
+          const currentTextSpan = document.getElementById('StickySizeCurrentValue');
+          if (currentTextSpan) currentTextSpan.textContent = label;
+
+          if (hiddenSelect) {
+            hiddenSelect.value = value;
+            hiddenSelect.dispatchEvent(new Event('change'));
+          }
+
+          dropdownList.classList.add('hidden');
+          document.getElementById('StickySizeTrigger').setAttribute('aria-expanded', 'false');
+
+          document.querySelectorAll('.sticky-option-btn').forEach((b) => {
+            b.classList.remove('border-foreground', 'bg-gray-50');
+            b.classList.add('border-gray-200');
+          });
+          newBtn.classList.remove('border-gray-200');
+          newBtn.classList.add('border-foreground', 'bg-gray-50');
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!dropdownList.contains(e.target) && !newTrigger.contains(e.target)) {
+          dropdownList.classList.add('hidden');
+          newTrigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    if (hiddenSelect) {
+      const newSelect = hiddenSelect.cloneNode(true);
+      hiddenSelect.parentNode.replaceChild(newSelect, hiddenSelect);
+
+      newSelect.addEventListener('change', (e) => {
+        const selectedVariantId = e.target.value;
+        if (stickyInput) stickyInput.value = selectedVariantId;
+        const mainRadio = document.querySelector(`input.variant-radio[value="${selectedVariantId}"]`);
+        if (mainRadio) {
+          mainRadio.checked = true;
+          mainRadio.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    }
+
+    const stickyColorLinks = document.querySelectorAll('.sticky-color-link');
+    if (stickyColorLinks.length > 0) {
+      stickyColorLinks.forEach((link) => {
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+
+        newLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          const href = this.getAttribute('href');
+          const mainColorLink = document.querySelector(`.color-swatch-link[href="${href}"]`);
+          if (mainColorLink) {
+            mainColorLink.dispatchEvent(
+              new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+              })
+            );
+          }
+        });
+      });
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', window.initStickyATC);
+</script>

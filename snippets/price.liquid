@@ -1,0 +1,22 @@
+{% comment %}
+  Props:
+  - product: Product Object (required)
+  - class: String (optional)
+{% endcomment %}
+
+{%- liquid
+  assign target_variant = product.selected_or_first_available_variant
+  assign compare_at_price = target_variant.compare_at_price
+  assign price = target_variant.price
+-%}
+
+<div class="price-element body-large flex gap-1.5 {{ class }}">
+  {%- if compare_at_price > price -%}
+    <s class="text-secondary">
+      {{ compare_at_price | money }}
+    </s>
+  {%- endif -%}
+  <span class="text-foreground">
+    {{ price | money }}
+  </span>
+</div>

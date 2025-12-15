@@ -78,6 +78,8 @@
   "product": {
     "add_to_cart": "Add to Bag",
     "sold_out": "Sold Out",
+    "size": "Size:",
+    "color": "Color:",
     "select_size": "Select Size:",
     "size_guide": "Size Guide",
     "select_color": "Select Color:",
