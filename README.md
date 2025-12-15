@@ -5,9 +5,9 @@ Shopify store, built using **Shopify CLI** and **Liquid**.
 
 ## 🔗 Links
 
--   **Development Store:** \[Вставте посилання на магазин\]
--   **Store Password:** `[Вставте пароль]`
--   **GitHub Repository:** \[Вставте посилання на репозиторій\]
+-   **Development Store:** https://tkachenko-oleksandr-test-store.myshopify.com/products/nike-air-max-plus-white?preview_theme_id=184300896565
+-   **Store Password:** nowvol
+-   **GitHub Repository:** https://github.com/krutobok/shopify-school-homepage-tkachenko-oleksandr/tree/main
 
 ## 🛠 Technologies Used
 
@@ -22,13 +22,13 @@ Shopify store, built using **Shopify CLI** and **Liquid**.
 1.  Clone the repository:
 
     ``` bash
-    git clone [Вставте посилання на репозиторій]
+    git clone https://github.com/krutobok/shopify-school-homepage-tkachenko-oleksandr.git
     ```
 
 2.  Navigate to the project folder:
 
     ``` bash
-    cd [Назва вашої папки]
+    cd shopify-school-homepage-tkachenko-oleksandr
     ```
 
 3.  Install dependencies:
@@ -93,10 +93,6 @@ Dynamic inventory status: - **In stock** -- high inventory\
 ## Data Structure (Metafields & Metaobjects)
 
 ### 1. Product Metafields
-
-  ---------------------------------------------------------------------------------
-  Namespace              Key                  Type           Purpose
-  ---------------------- -------------------- -------------- ----------------------
 | Namespace & Key | Type | Purpose |
 | :--- | :--- | :--- |
 | `custom.related_colors` | List of Products | Links different products as color swatches. |
@@ -109,11 +105,16 @@ Dynamic inventory status: - **In stock** -- high inventory\
   ---------------------------------------------------------------------------------
 
 ### 2. Metaobjects
-
-**Type:** Size Standard (`size_standard`)
-
-  Field Name    Key           Type               Purpose
-  ------------- ------------- ------------------ ---------------------------
-  Name          name          Single Line Text   Guide identifier
-  Image         image         File (Image)       Visual size chart
-  Description   description   Rich Text          HTML table with size grid
+The size chart system is built using two related metaobjects to create a dynamic table.
+#### Type 1: Size Guide (size_guide)
+Functions as the "Parent" object that groups rows together.
+| Field Name | Key | Type | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Title** | `title` | Single Line Text | Internal name of the guide (e.g., "Men's Shoes"). |
+| **Rows** | `rows` | List of Metaobjects | References multiple `Size Standard` objects to build the table rows. |
+  #### Type 2: Size Standard (size_standard)
+  | Field Name | Key | Type | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Title** | `title` | Single Line Text | Internal row identifier. |
+| **Display Title** | `display_title` | Single Line Text | The visible row header (e.g., "US Size"). |
+| **Size Columns** | *various* | Single Line Text | Fields for specific sizes (e.g., `Size EU 35.5`, `Size UK 6`). |
