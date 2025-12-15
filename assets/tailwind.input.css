@@ -17,7 +17,7 @@
   --spacing-width-page: var(--page-width);
   --spacing-page-margin: var(--page-margin);
   --spacing-page-margin-mobile: calc(var(--spacing-page-margin) / 1.5);
-  --spacing-mobile-thumbnails: calc(var(--spacing-page-margin) * -1);
+  --spacing-mobile-slider: calc(var(--spacing-page-margin-mobile) * -1);
 }
 
 @layer base {

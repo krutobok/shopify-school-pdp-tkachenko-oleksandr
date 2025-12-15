@@ -15,10 +15,12 @@
         padding-top: {{ section.settings.padding_top }}px;
         padding-bottom: {{ section.settings.padding_bottom }}px;
       }
+      .swiper.thumb-swiper.swiper-initialized{
+        margin: 0!important;
+      }
     }
-
     .swiper.thumb-swiper.swiper-initialized{
-      margin: 0!important;
+      margin-left: 0!important;
     }
 {%- endstyle -%}
 
@@ -51,7 +53,7 @@
           {% assign enable_slider = true %}
         {% endif %}
 
-        <div class="thumbnails-wrapper max-w-134 md:max-w-auto md:max-h-134 my-0! {% if enable_slider %}swiper thumb-swiper{% else %}flex gap-4 justify-start overflow-x-auto mr-mobile-thumbnails md:justify-between md:flex-col md:gap-6 md:overflow-x-visible md:mr-0{% endif %}">
+        <div class="thumbnails-wrapper w-screen md:max-w-auto md:max-h-134 my-0! {% if enable_slider %}swiper thumb-swiper pr-6 md:pr-0{% else %}flex gap-4 justify-start overflow-x-auto mr-mobile-slider md:justify-between md:flex-col md:gap-6 md:overflow-x-visible md:mr-0{% endif %}">
           {% if enable_slider %}<div class="swiper-wrapper">{% endif %}
           {% for image in product.images %}
             {%- capture main_image_srcset -%}             
@@ -72,7 +74,7 @@
               {% assign is_active = true %}
             {% endif %}
 
-            {% if enable_slider %}<div class="swiper-slide h-auto! w-auto!">{% endif %}
+            {% if enable_slider %}<div class="swiper-slide h-auto! w-auto! last:pr-7 md:last:pr-0 ">{% endif %}
             <button
               class="
                 gallery-thumb-btn w-22 h-22 shrink-0 border-none p-0 rounded-lg block
@@ -341,10 +343,10 @@
       this.swiper = new Swiper(container, {
         slidesPerView: 'auto',
         spaceBetween: 16,
+        initialSlide: initialIndex,
         centeredSlides: true,
         centeredSlidesBounds: true,
         slideToClickedSlide: true,
-        initialSlide: initialIndex,
         mousewheel: true,
         direction: 'horizontal',
         breakpoints: {
