@@ -7,7 +7,7 @@ Shopify store, built using **Shopify CLI** and **Liquid**.
 
 -   **Development Store:** https://tkachenko-oleksandr-test-store.myshopify.com/products/nike-air-max-plus-white?preview_theme_id=184300896565
 -   **Store Password:** nowvol
--   **GitHub Repository:** https://github.com/krutobok/shopify-school-homepage-tkachenko-oleksandr/tree/main
+-   **GitHub Repository:** https://github.com/krutobok/shopify-school-pdp-tkachenko-oleksandr
 
 ## Technologies Used
 
@@ -22,13 +22,13 @@ Shopify store, built using **Shopify CLI** and **Liquid**.
 1.  Clone the repository:
 
     ``` bash
-    git clone https://github.com/krutobok/shopify-school-homepage-tkachenko-oleksandr.git
+    git clone https://github.com/krutobok/shopify-school-pdp-tkachenko-oleksandr.git
     ```
 
 2.  Navigate to the project folder:
 
     ``` bash
-    cd shopify-school-homepage-tkachenko-oleksandr
+    cd shopify-school-pdp-tkachenko-oleksandr
     ```
 
 3.  Install dependencies:
